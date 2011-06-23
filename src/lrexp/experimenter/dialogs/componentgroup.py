@@ -67,6 +67,7 @@ class ArgumentListDialog( ComponentGroupModeDialog ):
         rw.ADD = True
         rw.RAISE = rw.LOWER = rw.REMOVE = False if id is ArgumentList.MONO else True
 
+    @updateModel
     def modeSelected( self, id ):
         rm = self.reorderModel
         nullIndex = QtCore.QModelIndex()
@@ -85,6 +86,7 @@ class ArgumentListDialog( ComponentGroupModeDialog ):
         if newL:
             rm.dataChanged.emit( rm.index( 0 ), rm.index( newL - 1 ) )
 
+    @updateModel
     def newInput( self, input ):
         rm = self.reorderModel
         if self.component.mode is ArgumentList.MONO:
