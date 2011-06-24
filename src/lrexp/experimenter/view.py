@@ -5,6 +5,7 @@ Created on Apr 26, 2011
 '''
 from PyQt4 import QtGui, QtCore
 from zope.interface import Interface, implements
+from delegate import BaseColorDelegate
 
 class TreeWidget( QtGui.QGroupBox ):
     class Cycler( QtGui.QPushButton ):
@@ -95,6 +96,7 @@ class TreeView( QtGui.QTreeView ):
         self.setAlternatingRowColors( True )
         self.setHeaderHidden( True )
         self.setExpandsOnDoubleClick( False )
+        self.setItemDelegate( BaseColorDelegate() )
 
     def expandTo( self, index ):
         def expand( child ):

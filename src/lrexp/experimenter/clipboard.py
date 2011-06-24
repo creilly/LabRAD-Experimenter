@@ -9,7 +9,7 @@ from component import ComponentModel, ComponentItem, BaseComponentModel
 from reorderlist import IReorderList, ReorderWidget
 from zope.interface import implements
 from twisted.python import components
-from view import TreeView, TreeWidget, ITree
+from view import TreeView, ITree, TreeWidget
 
 instance = None
 
@@ -21,13 +21,14 @@ class ClipBoardModel( BaseComponentModel ):
             return instance
         instance = super( ClipBoardModel, cls ).__new__( cls )
         super( ClipBoardModel, cls ).__init__( instance )
+        ComponentModel().endUpdate.connect( instance.update )
         return instance
 
     def __init__( self ):
         pass
 
     def mimeTypes( self ):
-        return ['lrexp/component', 'lrexp/source', 'public/html']
+        return ['lrexp/component', 'lrexp/source']
 
     def dropMimeData( self, mimeData, action, row, column, parent ):
         rows = [int( row ) for row in str( mimeData.data( 'lrexp/component' ) ).split( ',' )]
@@ -98,3 +99,30 @@ class ClipBoardReorderWidget( ReorderWidget ):
         else:
             isFrontLevel = current.parent() == QtCore.QModelIndex()
         self.raiseEnabled = self.lowerEnabled = self.removeEnabled = isFrontLevel
+
+class ClipBoardSelectDialog( QtGui.QDialog ):
+    def __init__( self, parent, condition = None, delegate = None ):
+        super( ClipBoardSelectDialog, self ).__init__( parent )
+        tree = TreeView()
+        tree.setModel( ClipBoardModel() )
+        if delegate: tree.setItemDelegate( delegate )
+
+        condition = condition( self ) if condition else lambda component: True
+
+        def doubleClicked( index ):
+            if not index.isValid(): return
+            component = tree.model().itemFromIndex( index ).component
+            if condition( component ):
+                self.result = component
+                self.accept()
+
+        tree.doubleClicked.connect( doubleClicked )
+
+        layout = QtGui.QVBoxLayout( self )
+        layout.addWidget( TreeWidget( tree, 'Get from Clip board' ) )
+        self.condition = condition
+
+    def show( self ):
+        self.result = None
+        super( ClipBoardSelectDialog, self ).show()
+

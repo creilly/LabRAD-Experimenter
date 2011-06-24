@@ -24,8 +24,6 @@ class ScanDialog( UnitDialog ):
         tree = self.tree = TreeView()
         tree.setModel( BaseComponentModel() )
         tree.doubleClicked.connect( lambda index: self.setScanInput( tree.model().itemFromIndex( index ).component ) )
-        self.highlightScanInput = BaseColorDelegate()
-        tree.setItemDelegate( self.highlightScanInput )
         treeWidget = self.treeWidget = TreeWidget( tree )
         self.scanInputCycler = treeWidget.addCycler( 'Scan input' )
         self.updateTree()
@@ -54,7 +52,12 @@ class ScanDialog( UnitDialog ):
         model.clear()
         model.appendRow( ComponentItem( self.component.scanUnit ) )
         self.treeWidget.setTitle( 'Scan unit: %s (%s)' % ( repr( self.component.scanUnit ), type( self.component.scanUnit ).__name__ ) )
-        self.highlightScanInput.clearMatches()
-        self.highlightScanInput.addMatchColor( self.component.scanInput, 'red' )
+        for item, component in model.items():
+            if component is self.component.scanInput:
+                pass
         self.scanInputCycler.setIndexes( [item.index() for item in model.getItemsFromComponent( self.component.scanInput )] )
         self.scanInputCycler.next()
+
+class ScanComponentModel( BaseComponentModel ):
+    def applyFormatting( self ):
+        pass

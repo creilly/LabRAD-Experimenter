@@ -128,7 +128,7 @@ class UnitSelectorWidget( QtGui.QGroupBox ):
             self.unitSelected.emit( unit )
 
     def clipBoard( self ):
-        print 'accessing clipboard'
+        pass
 
 def getUnit():
     d = QtGui.QDialog()
