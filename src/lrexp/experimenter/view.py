@@ -8,24 +8,6 @@ from zope.interface import Interface, implements
 from delegate import BaseColorDelegate
 
 class TreeWidget( QtGui.QGroupBox ):
-    class Cycler( QtGui.QPushButton ):
-        def __init__( self, text, tree, indexes = [] ):
-            super( TreeWidget.Cycler, self ).__init__( text )
-            self.i = 0
-            self.indexes = indexes
-            self.tree = tree
-            self.clicked.connect( self.next )
-            self.setEnabled( bool( indexes ) )
-        def setIndexes( self, indexes ):
-            self.indexes = indexes
-            self.setEnabled( bool( indexes ) )
-            self.i = 0
-        def next( self ):
-            if not self.indexes: return
-            index = self.indexes[self.i]
-            self.tree.expandTo( index )
-            self.tree.setCurrentIndex( index )
-            self.i = ( self.i + 1 ) % len( self.indexes )
 
     def __init__( self, tree, title = '', parent = None ):
         super( TreeWidget, self ).__init__( title, parent )
@@ -48,11 +30,6 @@ class TreeWidget( QtGui.QGroupBox ):
         self.layout().addLayout( expandRow )
 
         self.tree = tree
-
-    def addCycler( self, text, indexes = [] ):
-        cycler = self.Cycler( text, self.tree, indexes )
-        self.expandRow.addWidget( cycler )
-        return cycler
 
     def addButton( self, text ):
         button = QtGui.QPushButton( text )

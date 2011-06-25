@@ -6,8 +6,7 @@ Created on Jun 5, 2011
 from PyQt4 import QtGui
 from . import UnitDialog, UnitSelectorWidget
 from ..view import TreeView, TreeWidget
-from ..delegate import BaseColorDelegate
-from ..component import BaseComponentModel, ComponentItem, updateModel, DontUpdate
+from ..component import ColorComponentModel, updateModel, DontUpdate
 from ...components import Input
 
 class ScanDialog( UnitDialog ):
@@ -22,11 +21,13 @@ class ScanDialog( UnitDialog ):
         unitSelector.unitSelected.connect( self.setScanUnit )
 
         tree = self.tree = TreeView()
-        tree.setModel( BaseComponentModel() )
+        tree.setModel( ColorComponentModel() )
+        tree.model().setRoot( component.scanUnit )
+        self.colorCondition = tree.model().addColorCondition( component.scanInput, 'red', QtGui.QFont.Bold )
         tree.doubleClicked.connect( lambda index: self.setScanInput( tree.model().itemFromIndex( index ).component ) )
         treeWidget = self.treeWidget = TreeWidget( tree )
-        self.scanInputCycler = treeWidget.addCycler( 'Scan input' )
-        self.updateTree()
+        self.cycler = tree.model().addCycler( tree, component.scanInput, treeWidget.addButton( 'Scan Input' ) )
+        self.cycler.button.setToolTip( 'Double click or press Enter on another Input to change' )
 
         treeLayout.addWidget( unitSelector )
         treeLayout.addWidget( treeWidget )
@@ -36,28 +37,17 @@ class ScanDialog( UnitDialog ):
 
     @updateModel
     def setScanUnit( self, unit ):
-        component = self.component
-        component.scanUnit = unit
-        component.scanInput = None
-        self.updateTree()
+        self.component.scanUnit = unit
+        model = self.tree.model()
+        model.clear()
+        model.setRoot( unit )
+        self.treeWidget.setTitle( 'Scan Unit: <i>%s</i>' % repr( unit ) )
+        self.setScanInput( Input( None ) )
 
     @updateModel
     def setScanInput( self, input ):
         if type( input ) is not Input: raise DontUpdate
         self.component.scanInput = input
-        self.updateTree()
-
-    def updateTree( self ):
-        model = self.tree.model()
-        model.clear()
-        model.appendRow( ComponentItem( self.component.scanUnit ) )
-        self.treeWidget.setTitle( 'Scan unit: %s (%s)' % ( repr( self.component.scanUnit ), type( self.component.scanUnit ).__name__ ) )
-        for item, component in model.items():
-            if component is self.component.scanInput:
-                pass
-        self.scanInputCycler.setIndexes( [item.index() for item in model.getItemsFromComponent( self.component.scanInput )] )
-        self.scanInputCycler.next()
-
-class ScanComponentModel( BaseComponentModel ):
-    def applyFormatting( self ):
-        pass
+        self.cycler.setCondition( input )
+        self.colorCondition.setCondition( input )
+        self.cycler.next()

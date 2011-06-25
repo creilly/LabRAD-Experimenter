@@ -12,7 +12,6 @@ from component import ComponentModel, updateModel
 from globals import GlobalsEditWidget
 from menu import menubar, recentUnits, fileMenu, askToSave, _saveUnitAs
 from view import TreeView, TreeWidget
-from delegate import BaseColorDelegate
 from dialogs import input, sequence, parameter, componentgroup, scan, action, execute
 from labradconnection import LRConnectionManager
 from clipboard import ClipBoardReorderWidget
@@ -68,8 +67,6 @@ class MainWindow( QtGui.QMainWindow ):
         rootView.setDragEnabled( True )
         rootView.pressed.connect( self.mouseEvent )
         rootView.setModel( ComponentModel() )
-        delegate = RootColorDelegate()
-        rootView.setItemDelegate( delegate )
         rootView.doubleClicked.connect( lambda index: self.editComponent( rootView.model().itemFromIndex( index ).component ) )
         ComponentModel().beginUpdate.connect( self.modelToUpdate )
         ComponentModel().endUpdate.connect( self.modelUpdated )
@@ -112,9 +109,8 @@ class MainWindow( QtGui.QMainWindow ):
             action.setCheckable( True )
             viewMenu.addAction( action )
         def triggered( action ):
-            BaseColorDelegate.setSize( getattr( BaseColorDelegate, str( action.text() ).upper() ) )
+            print 'this does nothing now'
         sizeOptions.triggered.connect( triggered )
-        sizeOptions.actions()[0].trigger()
 
         centralWidget.layout().addLayout( widgets )
 
@@ -210,15 +206,6 @@ class MainWindow( QtGui.QMainWindow ):
             cxnMan.connectionChanged.disconnect( self.connectionLost )
             cxnMan.connection.disconnect()
         self.close()
-
-class RootColorDelegate( BaseColorDelegate ):
-
-    def __init__( self ):
-        super( RootColorDelegate, self ).__init__()
-        self.conditions.append( ( lambda component: IUnit.providedBy( component ) and not component.configured, 'red' ) )
-        self.conditions.append( ( lambda component: type( component ) is Global, 'purple' ) )
-        self.conditions.append( ( lambda component: type( component ) is Map, 'green' ) )
-        self.conditions.append( ( lambda component: type( component ) is Result, 'blue' ) )
 
 
 

@@ -5,7 +5,7 @@ Created on May 2, 2011
 '''
 from PyQt4 import QtGui, QtCore
 
-from component import ComponentModel
+from component import ComponentModel, BaseComponentModel
 from view import TreeView, TreeWidget
 from delegate import BaseColorDelegate
 from globals import GlobalsListWidget
@@ -72,31 +72,37 @@ class OldInput( BaseInputSelector ):
 
         tree = TreeView()
         treeWidget = TreeWidget( tree, 'Get existing input' )
-        tree.setModel( ComponentModel() )
+        model = BaseComponentModel()
+        model.setRoot( ComponentModel().rootComponent )
 
-        delegate = BaseColorDelegate()
-        tree.setItemDelegate( delegate )
-        isInput = lambda component: isinstance( component, Input )
-        delegate.addConditionColor( isInput, 'red' )
-        treeWidget.addCycler( 'Next', [item.index() for item in ComponentModel().getItemsFromFunction( isInput )] )
-        if referenceComponent is None:
-            tree.expandAll()
-        else:
-            delegate.addMatchColor( referenceComponent, 'blue' )
+        referenceIndexes = []
+        for item, component in model.items():
+            if isinstance( component, Input ):
+                item.setWeight( QtGui.QFont.Bold )
+                if component is referenceComponent:
+                    item.setColor( 'blue' )
+                    referenceIndexes.append( item.index() )
+                else:
+                    item.setColor( 'red' )
+            else:
+                item.setWeight( QtGui.QFont.Light )
+
+        tree.setModel( model )
+
+        if referenceComponent:
             tree.collapseAll()
-            indexes = [item.index() for item in ComponentModel().getItemsFromComponent( referenceComponent )]
-            treeWidget.addCycler( 'Current input', indexes )
-            for index in indexes:
-                tree.expandTo( index )
-                tree.expand( index )
-                tree.setCurrentIndex( index )
+            referenceCycler = treeWidget.addCycler( 'Current input', referenceIndexes )
+            for i in range( len( referenceIndexes ) ):
+                referenceCycler.next()
+        else:
+            tree.expandAll()
 
         def itemSelected( component ):
             if isinstance( component, Input ):
                 self.selectedInput = component
                 dialog.accept()
 
-        tree.doubleClicked.connect( lambda index: itemSelected( ComponentModel().itemFromIndex( index ).component ) )
+        tree.doubleClicked.connect( lambda index: itemSelected( model.itemFromIndex( index ).component ) )
 
         dialog.layout().addWidget( treeWidget )
 

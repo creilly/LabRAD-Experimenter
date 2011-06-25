@@ -9,24 +9,24 @@ from PyQt4 import QtGui
 from . import ComponentEditDialog
 from ..editor import TextEditor, ValueEditor, FunctionEditorUpdater
 from ..view import TreeView, TreeWidget
-from ..delegate import BaseColorDelegate
-from ..component import ComponentModel, updateModel
+from ..component import ComponentModel, updateModel, ColorComponentModel
 from ..globals import GlobalsModel
-
-from ...components import Result, Global
 
 class BaseInputDialog( ComponentEditDialog ):
     def __init__( self, parent, component ):
         super( BaseInputDialog, self ).__init__( parent, component, 'Edit %s' % component.__class__.__name__ )
 
-        inputView = TreeView()
-        inputView.setModel( ComponentModel() )
-        colorDelegate = self.colorDelegate = BaseColorDelegate()
-        colorDelegate.addMatchColor( component, 'red' )
-        inputView.setItemDelegate( colorDelegate )
+        inputView = self.inputView = TreeView()
+        model = self.model = ColorComponentModel()
+
+        model.setRoot( ComponentModel().rootComponent )
+
+        inputView.setModel( model )
+
         treeWidget = self.treeWidget = TreeWidget( inputView )
 
-        self.inputCycler = treeWidget.addCycler( 'Next match', [item.index() for item in ComponentModel().getItemsFromComponent( component )] )
+        model.addCycler( inputView, component, treeWidget.addButton( 'Next match' ) )
+        model.addColorCondition( component, 'red', QtGui.QFont.Bold )
 
         descriptionEditor = TextEditor( 'Description', 'Enter new description' )
         descriptionEditor.setText( component.description )
@@ -34,26 +34,19 @@ class BaseInputDialog( ComponentEditDialog ):
         def editDescription( description ):
             descriptionEditor.setText( description )
             component.description = description
-            self.updateModels()
 
         descriptionEditor.editCreated.connect( lambda edit: editDescription( edit.value ) )
 
         self.tabWidget.addTab( descriptionEditor, 'Description' )
         self.tabWidget.addTab( treeWidget, 'View' )
 
-        ComponentModel().endUpdate.connect( self.modelUpdated )
-
-    def modelUpdated( self ):
-        self.inputCycler.setIndexes( [item.index() for item in ComponentModel().getItemsFromComponent( self.component )] )
+        ComponentModel().endUpdate.connect( model.update )
 
 class ResultDialog( BaseInputDialog ):
     def __init__( self, parent, component ):
         super( ResultDialog, self ).__init__( parent, component )
-        self.resultCycler = self.treeWidget.addCycler( 'Goto Action', [item.index() for item in ComponentModel().getItemsFromComponent( self.component.parentAction )] )
-        self.colorDelegate.addMatchColor( component.parentAction, 'blue' )
-    def modelUpdated( self ):
-        super( ResultDialog, self ).modelUpdated()
-        self.resultCycler.setIndexes( [item.index() for item in ComponentModel().getItemsFromComponent( self.component.parentAction )] )
+        self.model.addCycler( self.inputView, component.parentAction, self.treeWidget.addButton( 'Result Action' ) )
+
 class InputDialog( BaseInputDialog ):
     def __init__( self, parent, component ):
         super( InputDialog, self ).__init__( parent, component )

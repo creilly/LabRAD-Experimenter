@@ -62,7 +62,7 @@
      transform="translate(-127.50002,-276.00561)">
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:#000000;stroke-width:25;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:none;stroke:#000000;stroke-width:50;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path3697"
        sodipodi:cx="305.71429"
        sodipodi:cy="455.21933"
@@ -70,11 +70,11 @@
        sodipodi:ry="165.71428"
        d="m 471.42857,455.21933 c 0,91.52147 -74.19281,165.71428 -165.71428,165.71428 -91.52146,0 -165.71427,-74.19281 -165.71427,-165.71428 0,-91.52147 74.19281,-165.71428 165.71427,-165.71428 91.52147,0 165.71428,74.19281 165.71428,165.71428 z" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:20;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#000000;stroke-width:40;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 188.57143,345.21933 c 18.57143,48.57142 38.57143,27.14285 54.28571,50 15.71429,22.85714 -8.57143,54.28571 -12.85714,85.71428 -4.28571,31.42857 50,61.42857 15.71429,55.71429 -34.28572,-5.71429 -47.14286,-32.85715 -60,-31.42857 -12.85715,1.42857 -20,37.14285 -20,37.14285"
        id="path4235" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:20;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#000000;stroke-width:40;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 454.28571,379.50504 C 410,443.79075 357.14286,368.07647 321.42857,385.21933 c -35.71428,17.14285 8.57143,62.85714 0,92.85714 -8.57143,30 50,10 65.71429,24.28571 15.71428,14.28572 -44.28572,70 -22.85715,78.57143 21.42858,8.57143 68.57143,-15.71428 68.57143,-15.71428"
        id="path4237" />
   </g>
