@@ -76,7 +76,9 @@ class MainWindow( QtGui.QMainWindow ):
 
         globalsEditWidget = GlobalsEditWidget()
 
-        clipBoardWidget = TreeWidget( ClipBoardReorderWidget() )
+        clipBoard = ClipBoardReorderWidget()
+        clipBoard.tree.doubleClicked.connect( lambda index: self.editComponent( clipBoard.tree.model().itemFromIndex( index ).component ) )
+        clipBoardWidget = TreeWidget( clipBoard )
 
         right, left = QtCore.Qt.RightDockWidgetArea, QtCore.Qt.LeftDockWidgetArea
 
@@ -91,11 +93,6 @@ class MainWindow( QtGui.QMainWindow ):
         self.addDockWidget( right, dockClipBoard )
 
         viewMenu = menubar.addMenu( 'View' )
-        viewTree = viewMenu.addAction( 'Root tree' )
-        viewTree.setShortcut( QtGui.QKeySequence( 'Ctrl+Shift+T', QtGui.QKeySequence.NativeText ) )
-        viewTree.setCheckable( True )
-        viewTree.toggled.connect( treeWidget.setVisible )
-        viewTree.trigger()
         viewMenu.addAction( dockGlobals.toggleViewAction() )
         dockGlobals.toggleViewAction().setShortcut( QtGui.QKeySequence( 'Ctrl+Shift+G', QtGui.QKeySequence.NativeText ) )
         viewMenu.addAction( dockClipBoard.toggleViewAction() )

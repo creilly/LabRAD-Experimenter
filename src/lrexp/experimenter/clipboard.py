@@ -92,6 +92,7 @@ class ClipBoardReorderWidget( ReorderWidget ):
         reorderList.widget.selectionModel().currentChanged.connect( self.currentChanged )
         for attr in ITree.names():
             setattr( self, attr, getattr( reorderList.widget, attr ) )
+        self.tree = reorderList.widget
 
     def currentChanged( self, current, previous ):
         if not current.isValid():

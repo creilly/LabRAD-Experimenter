@@ -225,6 +225,7 @@ class ColorComponentItem( BaseComponentItem ):
                 if condition( self.component ):
                     self.setColor( color )
                     self.setWeight( weight )
+                    break #exits loop after a condition is satisfied 
         super( ColorComponentItem, self ).update()
 
 class ColorComponentModel( BaseComponentModel ):
@@ -250,8 +251,11 @@ class ColorComponentModel( BaseComponentModel ):
         condition = property( getCondition, _setCondition )
 
     def addColorCondition( self, condition, color, weight = None ):
+        self.insertColorCondition( len( self.conditions ), condition, color, weight )
+
+    def insertColorCondition( self, index, condition, color, weight = None ):
         colorCondition = self.ColorCondition( self, condition, color, weight )
-        self.conditions.append( colorCondition )
+        self.conditions.insert( index, colorCondition )
         self.update()
         return colorCondition
 

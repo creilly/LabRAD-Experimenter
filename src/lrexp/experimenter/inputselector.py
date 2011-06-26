@@ -11,6 +11,7 @@ from delegate import BaseColorDelegate
 from globals import GlobalsListWidget
 
 from ..components import Input, Map
+from lrexp.experimenter.component import ColorComponentModel
 
 class InputSelector( QtGui.QDialog ):
 
@@ -72,30 +73,19 @@ class OldInput( BaseInputSelector ):
 
         tree = TreeView()
         treeWidget = TreeWidget( tree, 'Get existing input' )
-        model = BaseComponentModel()
+        model = ColorComponentModel()
         model.setRoot( ComponentModel().rootComponent )
 
-        referenceIndexes = []
-        for item, component in model.items():
-            if isinstance( component, Input ):
-                item.setWeight( QtGui.QFont.Bold )
-                if component is referenceComponent:
-                    item.setColor( 'blue' )
-                    referenceIndexes.append( item.index() )
-                else:
-                    item.setColor( 'red' )
-            else:
-                item.setWeight( QtGui.QFont.Light )
+        isInput = lambda comp: isinstance( comp, Input )
+        model.addColorCondition( isInput , 'red', QtGui.QFont.Bold )
+        model.addCycler( tree, isInput, treeWidget.addButton( 'Next' ) )
+        if referenceComponent:
+            model.insertColorCondition( 0, referenceComponent, 'blue', QtGui.QFont.Bold )
+            cycler = model.addCycler( tree, referenceComponent, treeWidget.addButton( 'Current input' ) )
+            for i in range( len( cycler.items ) ):
+                cycler.next()
 
         tree.setModel( model )
-
-        if referenceComponent:
-            tree.collapseAll()
-            referenceCycler = treeWidget.addCycler( 'Current input', referenceIndexes )
-            for i in range( len( referenceIndexes ) ):
-                referenceCycler.next()
-        else:
-            tree.expandAll()
 
         def itemSelected( component ):
             if isinstance( component, Input ):
