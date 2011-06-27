@@ -335,9 +335,19 @@ class Unit( BaseComponent ):
     def configured( self ):
         return False
 
+nullInstance = None
 class NullUnit( Unit ):
+    def __new__( cls ):
+        global nullInstance
+        if nullInstance:
+            return nullInstance
+        nullInstance = super( NullUnit, cls ).__new__( cls )
+        super( NullUnit, cls ).__init__( nullInstance, 'Null Unit' )
+        return nullInstance
     def __init__( self ):
-        super( NullUnit, self ).__init__( 'Null Unit' )
+        pass
+    def __deepcopy__( self, memo ):
+        return self
 
 class Action( Function, Unit ):
     """
