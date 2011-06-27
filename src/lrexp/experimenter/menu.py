@@ -8,7 +8,9 @@ import os, pickle, inspect
 from PyQt4 import QtGui, QtCore
 from component import ComponentModel
 from dialogs import getNewUnit, filedialog
+from clipboard import ClipBoardBrowser
 from ..util import loadUnit, saveUnit
+from ..components import IUnit
 from .. import LREXPHOME
 
 compModel = ComponentModel()
@@ -92,6 +94,8 @@ saveRootAs = fileMenu.addAction( 'Save root as...' )
 saveRootAs.setShortcut( QtGui.QKeySequence( 'Ctrl+Shift+S', QtGui.QKeySequence.NativeText ) )
 loadRoot = fileMenu.addAction( 'Load root' )
 loadRoot.setShortcut( QtGui.QKeySequence( 'Ctrl+O', QtGui.QKeySequence.NativeText ) )
+clipBoardRoot = fileMenu.addAction( 'Root from clip board' )
+clipBoardRoot.setShortcut( QtGui.QKeySequence( 'Ctrl+C', QtGui.QKeySequence.NativeText ) )
 recentUnits = RecentUnitsMenu()
 fileMenu.addMenu( recentUnits )
 
@@ -132,6 +136,13 @@ def _loadRoot():
         compModel.setRoot( loadUnit( filename ) )
         recentUnits.addRecentUnit( filename )
 
+@askToSave
+def _rootFromClipBoard():
+    result = ClipBoardBrowser( IUnit.providedBy ).getComponent()
+    if result:
+        compModel.setRoot( result )
+        recentUnits.newFile()
+
 newRoot.triggered.connect( _newRoot )
 saveRoot.triggered.connect( _saveRoot )
 saveRoot.setEnabled( False )
@@ -142,3 +153,5 @@ saveRootAs.setEnabled( False )
 compModel.endUpdate.connect( lambda: saveRootAs.setEnabled( bool( compModel.rootComponent ) ) )
 
 loadRoot.triggered.connect( _loadRoot )
+
+clipBoardRoot.triggered.connect( _rootFromClipBoard )

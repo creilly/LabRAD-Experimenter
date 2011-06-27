@@ -251,7 +251,7 @@ class ColorComponentModel( BaseComponentModel ):
         condition = property( getCondition, _setCondition )
 
     def addColorCondition( self, condition, color, weight = None ):
-        self.insertColorCondition( len( self.conditions ), condition, color, weight )
+        return self.insertColorCondition( len( self.conditions ), condition, color, weight )
 
     def insertColorCondition( self, index, condition, color, weight = None ):
         colorCondition = self.ColorCondition( self, condition, color, weight )

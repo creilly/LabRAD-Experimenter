@@ -17,7 +17,7 @@ class ScanDialog( UnitDialog ):
 
         treeLayout = QtGui.QVBoxLayout( treeTab )
 
-        unitSelector = UnitSelectorWidget()
+        unitSelector = UnitSelectorWidget( component )
         unitSelector.unitSelected.connect( self.setScanUnit )
 
         tree = self.tree = TreeView()

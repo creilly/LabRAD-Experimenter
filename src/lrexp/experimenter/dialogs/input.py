@@ -40,7 +40,10 @@ class BaseInputDialog( ComponentEditDialog ):
         self.tabWidget.addTab( descriptionEditor, 'Description' )
         self.tabWidget.addTab( treeWidget, 'View' )
 
-        ComponentModel().endUpdate.connect( model.update )
+        ComponentModel().endUpdate.connect( self.updateModel )
+
+    def updateModel( self ):
+        self.model.update()
 
 class ResultDialog( BaseInputDialog ):
     def __init__( self, parent, component ):
@@ -55,10 +58,10 @@ class InputDialog( BaseInputDialog ):
         except:
             default = ''
         valueEditor = ValueEditor( 'Value', default = default )
-        valueEditor.setText( repr( component.value ) )
+        valueEditor.setText( str( component.value ) )
         @updateModel
         def editValue( value ):
-            valueText = repr( value )
+            valueText = str( value )
             if callable( value ):
                 valueText += ' (callable)'
             valueEditor.setText( valueText )

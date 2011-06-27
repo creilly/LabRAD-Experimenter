@@ -4,7 +4,6 @@ Created on Feb 24, 2011
 @author: christopherreilly
 '''
 import inspect, numpy, types
-import copy.copy as pyCopy
 
 from zope.interface import Interface, Attribute, implements
 from util import LRExpError, contains
@@ -13,8 +12,14 @@ from lr import LabradSetting
 class IComponent( Interface ):
     children = Attribute( "A list of the unit's children" )
 
-class Label( object ):
+class BaseComponent( object ):
     implements( IComponent )
+
+    @property
+    def children( self ):
+        return []
+
+class Label( BaseComponent ):
     def __init__( self, name, component ):
         self.name = name
         self.component = component
@@ -26,7 +31,7 @@ class Label( object ):
     def __repr__( self ):
         return self.name
 
-class Input( object ):
+class Input( BaseComponent ):
     """
     Every Parameter possesses an Input (or a subclass).
     
@@ -35,8 +40,6 @@ class Input( object ):
         value - used on execution
         description - should be short
     """
-    implements( IComponent )
-
     value = None
     description = ''
 
@@ -64,7 +67,10 @@ class Global( Input ):
     def __repr__( self ):
         return '%s (Global) -> %s' % ( self.name, str( self.value ) )
 
-class ComponentGroup( object ):
+    def __deepcopy__( self, memo ):
+        return self
+
+class ComponentGroup( BaseComponent ):
     implements( IComponent )
     def __init__( self, name, *components ):
         self.name = name
@@ -88,11 +94,6 @@ class ComponentGroup( object ):
 
     def emptyComponents( self ):
         while self.components: self.components.pop()
-
-    def __copy__( self ):
-        copy = super( ComponentGroup, self ).__copy__()
-        copy._components = [pyCopy( component ) for component in self.components if type( component ) in ( Label, Parameter )]
-        return copy
 
 class Arguments( ComponentGroup ):
     def __init__( self, *arguments ):
@@ -134,7 +135,7 @@ class ArgumentList( ComponentGroup ):
     def __repr__( self ):
         return '%s (%s mode)' % ( self.name, {self.MONO:'Mono', self.POLY:'Poly'}[self.mode] )
 
-class Parameter( object ):
+class Parameter( BaseComponent ):
     """
     Parameter instances serve as a way for a variable to interface with the Unit framework.
     
@@ -177,7 +178,7 @@ class KeywordArguments( ComponentGroup ):
             d[child.name] = child.input.value
         return d
 
-class Function( object ):
+class Function( BaseComponent ):
     """
     Abstract class that encapsulates the action of a python function
     
@@ -258,11 +259,6 @@ class Function( object ):
             children.append( self.kwargs )
         return children
 
-    def __copy__( self ):
-        copy = super( Function, self ).__copy__()
-        copy._args = pyCopy( self.args )
-        return copy
-
 class Map( Function, Input ):
     """
     An Input that maps many inputs to a single value using a function
@@ -296,7 +292,7 @@ class IUnit( IComponent ):
         Must be able to iterate over a unit.
         """
 
-class Unit( object ):
+class Unit( BaseComponent ):
     implements( IUnit )
 
     #Smallest step
@@ -479,12 +475,6 @@ class Scan( Unit ):
         if self.scanInput: children.append( self._scanInput )
         return children
 
-    def __copy__( self ):
-        copy = super( Scan, self ).__copy__()
-        copy._scanInput = pyCopy( self.scanInput )
-        copy.scanRange = pyCopy( self.scanRange )
-        return copy
-
     @property
     def configured( self ):
         return ( self.scanUnit is not None and
@@ -574,11 +564,6 @@ class Repeat( Unit ):
     def children( self ):
         return self.repeatUnit, self.repeats
 
-    def __copy__( self ):
-        copy = super( Repeat, self ).__copy__()
-        copy.repeats = pyCopy( self.repeats )
-        return copy
-
 class Conditional( Unit ):
     """
     Executes one of two units based on result of a condition
@@ -606,15 +591,3 @@ class Conditional( Unit ):
     @property
     def children( self ):
         return self.trueUnit, self.falseUnit, self.condition
-
-    def __copy__( self ):
-        copy = super( Conditional, self ).__copy__()
-        copy.trueUnit, copy.falseUnit, copy.condition = ( pyCopy( attribute ) for attribute in ( self.trueUnit, self.falseUnit, self.condition ) )
-        return copy
-
-if __name__ == "__main__":
-    pass
-
-
-
-

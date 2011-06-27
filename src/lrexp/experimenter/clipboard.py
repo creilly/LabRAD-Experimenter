@@ -13,7 +13,7 @@ from zope.interface import implements
 from twisted.python import components
 from view import TreeView, ITree, TreeWidget
 
-from ..components import IComponent
+from ..components import IComponent, IUnit
 
 instance = None
 
@@ -57,10 +57,16 @@ class ClipBoardModel( BaseComponentModel ):
         return mimeData
 
     def appendCopy( self, component, deep = False ):
-        copiedComponent = copy.copy( component )
+        copiedComponent = copy.deepcopy( component )
         item = ComponentItem( copiedComponent )
-        item.setText( item.text() + ' (copy)*' )
-        item.setToolTip( 'Recently created component copy.  "(copy)" text may disappear.' )
+        def renameRecursively( item ):
+            item.setText( item.text() + ' (copy)*' )
+            item.setToolTip( 'Recently created component copy.  "(copy)" text may disappear.' )
+            if IUnit.providedBy( item.component ):
+                item.component.name += ' (copy)'
+            for row in range( item.rowCount() ):
+                renameRecursively( item.child( row ) )
+        renameRecursively( item )
         self.appendRow( item )
 
 class ClipBoardReorderModel( object ):
@@ -74,6 +80,7 @@ class ClipBoardReorderModel( object ):
         tree.setSelectionMode( tree.SingleSelection )
         tree.setModel( model )
         tree.setDragDropMode( tree.DragDrop )
+        tree.setDropIndicatorShown( False )
         self.raiseItem = lambda: self.changeRows( self.UP )
         self.lowerItem = lambda: self.changeRows( self.DOWN )
         self.removeItem = lambda: self.changeRows( self.REMOVE )

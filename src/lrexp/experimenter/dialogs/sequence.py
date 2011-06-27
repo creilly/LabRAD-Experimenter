@@ -19,10 +19,11 @@ from twisted.python import components
 class SequenceReorder( ComponentReorderList ):
     def __init__( self, sequenceUnit ):
         super( SequenceReorder, self ).__init__( sequenceUnit.sequence )
+        self.sequenceUnit = sequenceUnit
 
     @updateModel
     def addItem( self ):
-        unit = getUnit()
+        unit = getUnit( self.sequenceUnit )
         if not unit: return
         self.beginInsertRows( QtCore.QModelIndex(), len( self.pyList ), len( self.pyList ) )
         self.pyList.append( unit )

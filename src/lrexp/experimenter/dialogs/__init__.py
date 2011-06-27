@@ -9,8 +9,9 @@ from ..editor import Editor, TextEditor
 from ..component import ComponentModel, updateModel
 from ..reorderlist import IReorderList
 from ..view import BaseListView
+from ..clipboard import ClipBoardBrowser
 
-from ...components import Action, Scan, Sequence, Repeat, Conditional, Unit
+from ...components import Action, Scan, Sequence, Repeat, Conditional, Unit, IUnit
 from ...util import loadUnit
 
 class ComponentEditDialog( QtGui.QDialog ):
@@ -128,13 +129,17 @@ class UnitSelectorWidget( QtGui.QGroupBox ):
             self.unitSelected.emit( unit )
 
     def clipBoard( self ):
-        pass
+        clipBoardBrowser = ClipBoardBrowser()
+        clipBoardBrowser.condition = lambda component: IUnit.providedBy( component ) and ( clipBoardBrowser.isLoopFree( component, self.referenceUnit ) if self.referenceUnit else True )
+        result = clipBoardBrowser.getComponent()
+        if result:
+            self.unitSelected.emit( result )
 
-def getUnit():
+def getUnit( referenceUnit = None ):
     d = QtGui.QDialog()
     d.unit = None
     d.setLayout( QtGui.QVBoxLayout() )
-    unitSelector = UnitSelectorWidget()
+    unitSelector = UnitSelectorWidget( referenceUnit )
 
     def unitSelected( selectedUnit ):
         d.unit = selectedUnit

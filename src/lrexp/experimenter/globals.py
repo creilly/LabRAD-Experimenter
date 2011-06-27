@@ -94,12 +94,8 @@ class GlobalsModel( QtCore.QAbstractTableModel ):
 class GlobalsTable( QtGui.QTableView ):
     def __init__( self ):
         super( GlobalsTable, self ).__init__()
-        self.setAcceptDrops( True )
-        self.setDropIndicatorShown( True )
-        self.horizontalHeader().setStretchLastSection( True )
         self.verticalHeader().hide()
         self.setCornerButtonEnabled( False )
-
 
 class GlobalsReorder( object ):
     implements( IReorderList )
