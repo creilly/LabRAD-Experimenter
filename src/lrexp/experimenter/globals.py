@@ -6,6 +6,7 @@ Created on Apr 27, 2011
 from PyQt4 import QtCore, QtGui
 from ..components import Global
 from reorderlist import ReorderWidget, IReorderList
+from icons import editIcon
 
 from zope.interface import implements
 from twisted.python import components
@@ -135,21 +136,32 @@ class GlobalsReorder( object ):
         model.endRemoveRows()
     def addItem( self ):
         self.model.addGlobal()
+    def getGlobal( self ):
+        row = self.getRow()
+        if row is None: return
+        return self.model.globals[row]
+
 
 components.registerAdapter( GlobalsReorder, GlobalsModel, IReorderList )
 
-class GlobalsEditWidget( QtGui.QWidget ):
-
+class GlobalsEditWidget( ReorderWidget ):
+    globalDialogRequested = QtCore.pyqtSignal( Global )
     def __init__( self ):
-        super( GlobalsEditWidget, self ).__init__()
-        self.setLayout( QtGui.QVBoxLayout() )
-        self.layout().addWidget( ReorderWidget( GlobalsModel(), 'G' ) )
+        reorderModel = IReorderList( GlobalsModel() )
+        super( GlobalsEditWidget, self ).__init__( reorderModel, 'G' )
+        editGlobal = self.toolbar.addAction( editIcon, 'Show edit dialog' )
+        editGlobal.setShortcut( QtGui.QKeySequence( 'Ctrl+G, Ctrl+V', QtGui.QKeySequence.NativeText ) )
+        def getGlobalDialog():
+            globalInput = reorderModel.getGlobal()
+            if globalInput:
+                self.globalDialogRequested.emit( globalInput )
+        editGlobal.triggered.connect( getGlobalDialog )
 
 class GlobalsListWidget( QtGui.QListWidget ):
     globalSelected = QtCore.pyqtSignal( Global )
     def __init__( self ):
         super( GlobalsListWidget, self ).__init__()
-
+        self.setAlternatingRowColors( True )
         for globalInput in GlobalsModel().globals:
             listItem = QtGui.QListWidgetItem( '%s -> %s' % ( globalInput.name, globalInput.value ) )
             listItem.setToolTip( globalInput.description if globalInput.description else 'No description' )

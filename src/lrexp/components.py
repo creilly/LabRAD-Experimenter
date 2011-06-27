@@ -333,7 +333,11 @@ class Unit( BaseComponent ):
 
     @property
     def configured( self ):
-        return True
+        return False
+
+class NullUnit( Unit ):
+    def __init__( self ):
+        super( NullUnit, self ).__init__( 'Null Unit' )
 
 class Action( Function, Unit ):
     """

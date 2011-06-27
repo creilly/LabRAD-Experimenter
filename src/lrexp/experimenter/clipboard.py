@@ -18,7 +18,7 @@ from ..components import IComponent, IUnit
 instance = None
 
 class ClipBoardModel( BaseComponentModel ):
-
+    duplicateDetected = QtCore.pyqtSignal( QtCore.QModelIndex )
     def __new__( cls ):
         global instance
         if instance is not None:
@@ -47,6 +47,10 @@ class ClipBoardModel( BaseComponentModel ):
         Append any QStandardItem or Component
         """
         if IComponent.providedBy( item ):
+            for row in range( self.rowCount() ):
+                if self.item( row ).component is item:
+                    self.duplicateDetected.emit( self.item( row ).index() )
+                    return
             item = ComponentItem( item )
         super( ClipBoardModel, self ).appendRow( item )
 
@@ -81,10 +85,14 @@ class ClipBoardReorderModel( object ):
         tree.setModel( model )
         tree.setDragDropMode( tree.DragDrop )
         tree.setDropIndicatorShown( False )
+        model.duplicateDetected.connect( self.duplicateDetected )
         self.raiseItem = lambda: self.changeRows( self.UP )
         self.lowerItem = lambda: self.changeRows( self.DOWN )
         self.removeItem = lambda: self.changeRows( self.REMOVE )
         self.model = model
+    def duplicateDetected( self, index ):
+        self.tree.setCurrentIndex( index )
+        QtGui.QMessageBox.information( self.tree, 'Already in clipboard', 'Component already a top level entry in clipboard' )
 
     def getRow( self ):
         index = self.tree.currentIndex()

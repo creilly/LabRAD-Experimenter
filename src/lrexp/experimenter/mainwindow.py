@@ -75,6 +75,7 @@ class MainWindow( QtGui.QMainWindow ):
         widgets.addWidget( treeWidget, 3 )
 
         globalsEditWidget = GlobalsEditWidget()
+        globalsEditWidget.globalDialogRequested.connect( self.editComponent )
 
         clipBoard = ClipBoardReorderWidget()
         clipBoard.tree.doubleClicked.connect( lambda index: self.editComponent( clipBoard.tree.model().itemFromIndex( index ).component ) )

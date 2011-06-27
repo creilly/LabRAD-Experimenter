@@ -5,7 +5,7 @@ Created on Apr 26, 2011
 '''
 from PyQt4 import QtGui, QtCore
 
-from ..components import Global, Input, IUnit, IComponent
+from ..components import Global, Input, IUnit, IComponent, NullUnit
 from icons import compIcons
 from globals import GlobalsModel
 
@@ -180,7 +180,7 @@ class ComponentModel( BaseComponentModel ):
         gm = GlobalsModel()
         gm.globalRemoved.connect( self.globalRemoved )
         gm.globalsEdited.connect( self.update )
-        self.rootComponent = None
+        self.rootComponent = NullUnit()
         return self
 
     def globalRemoved( self, globalInput ):

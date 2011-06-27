@@ -27,3 +27,5 @@ for unit, name in {Action:'action',
 arrowIcons = {}
 for arrow in ( 'up', 'down', 'plus', 'minus' ):
     arrowIcons[arrow] = QtGui.QIcon( os.path.join( iconFileBase, '%s.svg' % arrow ) )
+
+editIcon = QtGui.QIcon( os.path.join( iconFileBase, 'edit.svg' ) )

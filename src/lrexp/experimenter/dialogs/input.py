@@ -75,7 +75,7 @@ class GlobalDialog( InputDialog ):
     def __init__( self, parent, component ):
         super( GlobalDialog, self ).__init__( parent, component )
         nameEditor = TextEditor( 'Name', 'Enter new Global name' )
-        nameEditor.setText( repr( component.name ) )
+        nameEditor.setText( str( component.name ) )
         @updateModel
         def editName( name ):
             nameEditor.setText( name )
