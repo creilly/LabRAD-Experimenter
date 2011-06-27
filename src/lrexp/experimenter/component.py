@@ -118,6 +118,9 @@ class BaseComponentModel( QtGui.QStandardItemModel ):
 
     def getItemsFromFunction( self, function, startItem = None ):
         matches = []
+        if startItem is None:
+            startItem = self.item( 0 )
+            if startItem is None: return matches
         def searchRecursively( item ):
             if function( item.component ): matches.append( item )
             for row in range( item.rowCount() ):

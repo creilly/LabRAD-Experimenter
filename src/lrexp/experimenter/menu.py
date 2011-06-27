@@ -8,7 +8,7 @@ import os, pickle, inspect
 from PyQt4 import QtGui, QtCore
 from component import ComponentModel
 from dialogs import getNewUnit, filedialog
-from clipboard import ClipBoardBrowser
+from clipboard import ClipBoardBrowser, ClipBoardModel
 from ..util import loadUnit, saveUnit
 from ..components import IUnit
 from .. import LREXPHOME
@@ -20,7 +20,7 @@ fileDialog = filedialog.getFileDialog( menubar )
 
 def askToSave( f ):
     def saveAndExec( *args, **kwargs ):
-        if compModel.rootComponent:
+        if compModel.rootComponent and not ClipBoardModel().getItemsFromComponent( compModel.rootComponent ):
             response = QtGui.QMessageBox.warning( menubar,
                                                   'New unit',
                                                   'You are about to lose your old unit, would you like to save?',

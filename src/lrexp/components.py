@@ -189,7 +189,7 @@ class Function( BaseComponent ):
         args = [parameter.input.value for parameter in self.args]
         if self.argListEnabled:
             args.extend( self.argList )
-        return args, ( self.kwargs.toDict() if self.keywordEnabled else {} )
+        return args, ( self.kwargDict.toDict() if self.keywordEnabled else {} )
 
     #===========================================================================
     # Properties
@@ -256,7 +256,7 @@ class Function( BaseComponent ):
         if self.argListEnabled:
             children.append( self.argList )
         if self.keywordEnabled:
-            children.append( self.kwargs )
+            children.append( self.kwargDict )
         return children
 
 class Map( Function, Input ):
