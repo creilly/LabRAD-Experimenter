@@ -5,9 +5,9 @@ Created on May 2, 2011
 '''
 from PyQt4 import QtGui, QtCore
 
-from component import ComponentModel, BaseComponentModel
+from component import ComponentModel
+from clipboard import ClipBoardBrowser
 from view import TreeView, TreeWidget
-from delegate import BaseColorDelegate
 from globals import GlobalsListWidget
 
 from ..components import Input, Map
@@ -28,7 +28,8 @@ class InputSelector( QtGui.QDialog ):
         for name, selector in ( ( 'New Input', NewInput() ) ,
                                 ( 'Old Input', OldInput( self, referenceComponent ) ),
                                 ( 'Global', Global( self ) ),
-                                ( 'Map', NewMap() ) ):
+                                ( 'Map', NewMap() ),
+                                ( 'Clip board', ClipBoard( self, parent.component ) ) ):
             optionsModel.appendRow( OptionsItem( name, selector ) )
             selector.inputSelected.connect( self.inputSelected.emit )
 
@@ -107,7 +108,7 @@ class OldInput( BaseInputSelector ):
 
 class Global( BaseInputSelector ):
     def __init__( self, parent ):
-        super( Global, self ).__init__( parent )
+        super( Global, self ).__init__()
         dialog = self.dialog = QtGui.QDialog( parent )
         dialog.setLayout( QtGui.QVBoxLayout() )
 
@@ -127,3 +128,17 @@ class Global( BaseInputSelector ):
         self.dialog.exec_()
         if self.selectedGlobal:
             self.inputSelected.emit( self.selectedGlobal )
+
+class ClipBoard( BaseInputSelector ):
+    def __init__( self, parent, component ):
+        super( ClipBoard, self ).__init__( parent )
+        self.component = component
+
+    def getInput( self ):
+        clipBoardBrowser = ClipBoardBrowser()
+        clipBoardBrowser.condition = lambda component: isinstance( component, Input ) and clipBoardBrowser.isLoopFree( component, self.component )
+        component = clipBoardBrowser.getComponent()
+        if component:
+            self.inputSelected.emit( component )
+
+

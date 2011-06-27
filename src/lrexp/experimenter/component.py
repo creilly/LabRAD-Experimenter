@@ -264,3 +264,5 @@ class ColorComponentModel( BaseComponentModel ):
         if not hasattr( self, '_conditions' ):
             self._conditions = []
         return self._conditions
+
+

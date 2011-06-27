@@ -4,7 +4,7 @@ Created on Apr 26, 2011
 @author: christopherreilly
 '''
 
-import os
+import os, copy
 
 from PyQt4 import QtGui, QtCore
 
@@ -14,7 +14,7 @@ from menu import menubar, recentUnits, fileMenu, askToSave, _saveUnitAs
 from view import TreeView, TreeWidget
 from dialogs import input, sequence, parameter, componentgroup, scan, action, execute
 from labradconnection import LRConnectionManager
-from clipboard import ClipBoardReorderWidget
+from clipboard import ClipBoardReorderWidget, ClipBoardModel
 
 from ..components import IUnit, Input, Global, Map, Result, Action, Sequence, Parameter, ScanRange, ArgumentList, Scan
 from ..util import loadUnit
@@ -65,7 +65,7 @@ class MainWindow( QtGui.QMainWindow ):
 
         rootView = self.rootView = TreeView()
         rootView.setDragEnabled( True )
-        rootView.pressed.connect( self.mouseEvent )
+        rootView.pressed.connect( lambda index: self.rootViewRightClick( index ) if QtGui.QApplication.mouseButtons() == QtCore.Qt.RightButton else None )
         rootView.setModel( ComponentModel() )
         rootView.doubleClicked.connect( lambda index: self.editComponent( rootView.model().itemFromIndex( index ).component ) )
         ComponentModel().beginUpdate.connect( self.modelToUpdate )
@@ -78,6 +78,7 @@ class MainWindow( QtGui.QMainWindow ):
 
         clipBoard = ClipBoardReorderWidget()
         clipBoard.tree.doubleClicked.connect( lambda index: self.editComponent( clipBoard.tree.model().itemFromIndex( index ).component ) )
+        clipBoard.tree.pressed.connect( lambda index: self.clipBoardRightClick( index ) if QtGui.QApplication.mouseButtons() == QtCore.Qt.RightButton else None )
         clipBoardWidget = TreeWidget( clipBoard )
 
         right, left = QtCore.Qt.RightDockWidgetArea, QtCore.Qt.LeftDockWidgetArea
@@ -89,6 +90,7 @@ class MainWindow( QtGui.QMainWindow ):
         dockClipBoard = QtGui.QDockWidget( 'Clip board' )
         dockClipBoard.setWidget( clipBoardWidget )
         dockClipBoard.setAllowedAreas( right | left )
+
         self.addDockWidget( left, dockGlobals )
         self.addDockWidget( right, dockClipBoard )
 
@@ -181,20 +183,25 @@ class MainWindow( QtGui.QMainWindow ):
             self.rootView.expand( currentIndex )
             self.rootView.setCurrentIndex( currentIndex )
 
-    def mouseEvent( self, index ):
+    def rootViewRightClick( self, index ):
         EDIT, SAVE, EXECUTE = 'Edit', 'Save', 'Execute'
-        if QtGui.QApplication.mouseButtons() == QtCore.Qt.RightButton:
-            menu = QtGui.QMenu( self )
-            component = ComponentModel().itemFromIndex( index ).component
-            if self.dialogDict.get( type( component ) ):
-                menu.addAction( EDIT )
-            if IUnit.providedBy( component ):
-                menu.addAction( SAVE )
-                if component.configured:
-                    menu.addAction( EXECUTE )
-            action = menu.exec_( QtGui.QCursor.pos() )
-            if action:
-                { EDIT:self.editComponent, SAVE:_saveUnitAs, EXECUTE:self.executeUnit }[str( action.text() )]( component )
+        menu = QtGui.QMenu( self )
+        component = ComponentModel().itemFromIndex( index ).component
+        if self.dialogDict.get( type( component ) ):
+            menu.addAction( EDIT )
+        if IUnit.providedBy( component ):
+            menu.addAction( SAVE )
+            if component.configured:
+                menu.addAction( EXECUTE )
+        action = menu.exec_( QtGui.QCursor.pos() )
+        if action:
+            { EDIT:self.editComponent, SAVE:_saveUnitAs, EXECUTE:self.executeUnit }[str( action.text() )]( component )
+
+    def clipBoardRightClick( self, index ):
+        menu = QtGui.QMenu( self )
+        menu.addAction( 'Copy component' )
+        if menu.exec_( QtGui.QCursor.pos() ):
+            ClipBoardModel().appendCopy( ClipBoardModel().itemFromIndex( index ).component )
 
     @askToSave
     def quitApplication( self ):

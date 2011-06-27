@@ -10,6 +10,7 @@ from delegate import BaseColorDelegate
 class TreeWidget( QtGui.QGroupBox ):
 
     def __init__( self, tree, title = '', parent = None ):
+
         super( TreeWidget, self ).__init__( title, parent )
 
         tree = ITree( tree )
@@ -49,6 +50,10 @@ class BaseListView( QtGui.QListView ):
         super( BaseListView, self ).keyPressEvent( event )
 
 class ITree( Interface ):
+    """
+    If you want to throw something besides a TreeView (custom class) into a TreeWidget,
+    just make sure it implements this interface.  See the Clip board for an example of how this is used.
+    """
     def expandTo( index ):
         """
         Expand all parent indexes of the specified indexes

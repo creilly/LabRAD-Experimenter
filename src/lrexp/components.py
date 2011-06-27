@@ -4,6 +4,7 @@ Created on Feb 24, 2011
 @author: christopherreilly
 '''
 import inspect, numpy, types
+import copy.copy as pyCopy
 
 from zope.interface import Interface, Attribute, implements
 from util import LRExpError, contains
@@ -88,10 +89,14 @@ class ComponentGroup( object ):
     def emptyComponents( self ):
         while self.components: self.components.pop()
 
+    def __copy__( self ):
+        copy = super( ComponentGroup, self ).__copy__()
+        copy._components = [pyCopy( component ) for component in self.components if type( component ) in ( Label, Parameter )]
+        return copy
+
 class Arguments( ComponentGroup ):
     def __init__( self, *arguments ):
         super( Arguments, self ).__init__( 'Arguments', *arguments )
-        self._components = tuple( self.components )
 
 class ArgumentList( ComponentGroup ):
     MONO = 0
@@ -178,10 +183,6 @@ class Function( object ):
     
     Automatic creation of parameters and enabling/disabling of list arguments
     """
-    _function = None
-    args = Arguments()
-    argList = ArgumentList()
-    kwargs = KeywordArguments()
 
     def getArgs( self ):
         args = [parameter.input.value for parameter in self.args]
@@ -205,11 +206,14 @@ class Function( object ):
         return bool( inspect.getargspec( self.function )[2] )
 
     def getFunction( self ):
+        if not hasattr( self, '_function' ):
+            self._function = None
         return self._function
     def setFunction( self, function ):
         self._function = function
-        self.argList = ArgumentList()
-        self.kwargDict = KeywordArguments()
+        self.argList.emptyComponents()
+        self.kwargDict.emptyComponents()
+        self.args.emptyComponents()
         if type( function ) is types.FunctionType:
             argNames, defs = ( inspect.getargspec( function )[i] for i in ( 0, 3 ) )
             defs = [] if defs is None else defs
@@ -220,7 +224,26 @@ class Function( object ):
                 args.append( Parameter( name, Input( defaultValue ) ) )
         elif type( function ) is LabradSetting:
             args = [Parameter( name ) for name in function.parameters]
-        self.args = Arguments( *args )
+        for arg in args:
+            self.args.components.append( arg )
+
+    @property
+    def args( self ):
+        if not hasattr( self, '_args' ):
+            self._args = Arguments()
+        return self._args
+
+    @property
+    def argList( self ):
+        if not hasattr( self, '_argList' ):
+            self._argList = ArgumentList()
+        return self._argList
+
+    @property
+    def kwargDict( self ):
+        if not hasattr( self, '_kwargDict' ):
+            self._kwargDict = KeywordArguments()
+        return self._kwargDict
 
     function = property( getFunction, setFunction )
 
@@ -234,6 +257,11 @@ class Function( object ):
         if self.keywordEnabled:
             children.append( self.kwargs )
         return children
+
+    def __copy__( self ):
+        copy = super( Function, self ).__copy__()
+        copy._args = pyCopy( self.args )
+        return copy
 
 class Map( Function, Input ):
     """
@@ -266,8 +294,6 @@ class IUnit( IComponent ):
     def __iter__():
         """
         Must be able to iterate over a unit.
-        
-        Should iterate over instances of LRExpSignal (for now)
         """
 
 class Unit( object ):
@@ -407,10 +433,6 @@ class ScanRange( ComponentGroup ):
     def mode( self ):
         return self._mode
 
-    @property
-    def children( self ):
-        return self.components
-
     def __repr__( self ):
         modes = ( 'Delta', 'Steps', 'Collection', 'List' )
         return '%s (%s mode)' % ( super( ScanRange, self ).__repr__(), modes[self.mode] )
@@ -456,6 +478,12 @@ class Scan( Unit ):
         children = [ self.scanUnit, self.scanRange ]
         if self.scanInput: children.append( self._scanInput )
         return children
+
+    def __copy__( self ):
+        copy = super( Scan, self ).__copy__()
+        copy._scanInput = pyCopy( self.scanInput )
+        copy.scanRange = pyCopy( self.scanRange )
+        return copy
 
     @property
     def configured( self ):
@@ -546,6 +574,11 @@ class Repeat( Unit ):
     def children( self ):
         return self.repeatUnit, self.repeats
 
+    def __copy__( self ):
+        copy = super( Repeat, self ).__copy__()
+        copy.repeats = pyCopy( self.repeats )
+        return copy
+
 class Conditional( Unit ):
     """
     Executes one of two units based on result of a condition
@@ -573,6 +606,11 @@ class Conditional( Unit ):
     @property
     def children( self ):
         return self.trueUnit, self.falseUnit, self.condition
+
+    def __copy__( self ):
+        copy = super( Conditional, self ).__copy__()
+        copy.trueUnit, copy.falseUnit, copy.condition = ( pyCopy( attribute ) for attribute in ( self.trueUnit, self.falseUnit, self.condition ) )
+        return copy
 
 if __name__ == "__main__":
     pass
