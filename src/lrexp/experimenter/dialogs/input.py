@@ -16,18 +16,6 @@ class BaseInputDialog( ComponentEditDialog ):
     def __init__( self, parent, component ):
         super( BaseInputDialog, self ).__init__( parent, component, 'Edit %s' % component.__class__.__name__ )
 
-        inputView = self.inputView = TreeView()
-        model = self.model = ColorComponentModel()
-
-        model.setRoot( ComponentModel().rootComponent )
-
-        inputView.setModel( model )
-
-        treeWidget = self.treeWidget = TreeWidget( inputView )
-
-        model.addCycler( inputView, component, treeWidget.addButton( 'Next match' ) )
-        model.addColorCondition( component, 'red', QtGui.QFont.Bold )
-
         descriptionEditor = TextEditor( 'Description', 'Enter new description' )
         descriptionEditor.setText( component.description )
         @updateModel
@@ -38,17 +26,11 @@ class BaseInputDialog( ComponentEditDialog ):
         descriptionEditor.editCreated.connect( lambda edit: editDescription( edit.value ) )
 
         self.tabWidget.addTab( descriptionEditor, 'Description' )
-        self.tabWidget.addTab( treeWidget, 'View' )
-
-        ComponentModel().endUpdate.connect( self.updateModel )
-
-    def updateModel( self ):
-        self.model.update()
 
 class ResultDialog( BaseInputDialog ):
     def __init__( self, parent, component ):
         super( ResultDialog, self ).__init__( parent, component )
-        self.model.addCycler( self.inputView, component.parentAction, self.treeWidget.addButton( 'Result Action' ) )
+        self.model.addCycler( self.inputView, component.parentAction, self.matchTreeWidget.addButton( 'Result Action' ) )
 
 class InputDialog( BaseInputDialog ):
     def __init__( self, parent, component ):

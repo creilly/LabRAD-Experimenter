@@ -301,7 +301,6 @@ class Unit( BaseComponent ):
     STEP = 1
     #All units
     ALL = 2
-    mode = PROBE
 
     def __init__( self, name = 'Unnamed unit' ):
         self.name = name
@@ -334,6 +333,15 @@ class Unit( BaseComponent ):
     @property
     def configured( self ):
         return False
+
+    def getMode( self ):
+        if not hasattr( self, '_mode' ):
+            self._mode = self.PROBE
+        return self._mode
+    def setMode( self, mode ):
+        self._mode = mode
+
+    mode = property( getMode, setMode )
 
 nullInstance = None
 class NullUnit( Unit ):
@@ -466,7 +474,7 @@ class Scan( Unit ):
         self.scanUnit = Sequence( 'Unnamed sequence' )
         self._tmpDescription = ''
         self._tmpValue = None
-        self._scanInput = Label( 'Scan Input', None )
+        self._scanInput = Label( 'Scan Input', Input( None ) )
 
     def __iter__( self ):
         unit, input, mode, length = self.scanUnit, self.scanInput, self.mode, len( self.scanRange )

@@ -6,9 +6,9 @@ from zope.interface import Interface, implements
 
 from filedialog import getFileDialog
 from ..editor import Editor, TextEditor
-from ..component import ComponentModel, updateModel
+from ..component import ComponentModel, updateModel, ColorComponentModel
 from ..reorderlist import IReorderList
-from ..view import BaseListView
+from ..view import BaseListView, TreeView, TreeWidget
 from ..clipboard import ClipBoardBrowser
 
 from ...components import Action, Scan, Sequence, Repeat, Conditional, Unit, IUnit
@@ -30,6 +30,25 @@ class ComponentEditDialog( QtGui.QDialog ):
         self.layout().addWidget( self.title )
         self.layout().addWidget( self.tabWidget, 1 )
 
+        view = self.matchView = TreeView()
+        model = self.matchModel = ColorComponentModel()
+
+        model.setRoot( ComponentModel().rootComponent )
+
+        view.setModel( model )
+
+        treeWidget = self.matchTreeWidget = TreeWidget( view )
+
+        model.addCycler( view, component, treeWidget.addButton( 'Next match' ) )
+        model.addColorCondition( component, 'red', QtGui.QFont.Bold )
+
+        self.tabWidget.addTab( treeWidget, 'View' )
+
+        ComponentModel().endUpdate.connect( self.updateModel )
+
+    def updateModel( self ):
+        self.matchModel.update()
+
 
 class UnitDialog( ComponentEditDialog ):
     def __init__( self, parent, component ):
@@ -39,9 +58,31 @@ class UnitDialog( ComponentEditDialog ):
         nameEdit.editCreated.connect( lambda edit: self.newUnitName( edit.value ) )
         nameEdit.setText( component.name )
 
+        modeSelector = QtGui.QButtonGroup( self )
+        modeSelectorWidget = QtGui.QWidget()
+        modeSelectorWidget.setLayout( QtGui.QVBoxLayout() )
+
+        for name, id, toolTip in  ( ( 'Probe', Unit.PROBE, 'Make each step as small as possible.' ),
+                                    ( 'Step', Unit.STEP, 'Make each step a full round.' ),
+                                    ( 'All', Unit.ALL, 'Execute entire unit in one step.' ) ):
+            radio = QtGui.QRadioButton( name )
+            radio.setToolTip( toolTip )
+            modeSelector.addButton( radio, id )
+            modeSelectorWidget.layout().addWidget( radio )
+
+        modeSelectorWidget.layout().addStretch()
+        modeSelector.buttonClicked[int].connect( self.modeSelected )
+
+        modeSelector.button( self.component.mode ).click()
+
         self.tabWidget.addTab( nameEdit, 'Name' )
+        self.tabWidget.addTab( modeSelectorWidget, 'Execution Mode' )
 
         self.layout().addWidget( self.tabWidget, 1 )
+
+    @updateModel
+    def modeSelected( self, mode ):
+        self.component.mode = mode
 
     def newUnitName( self, name ):
         self.component.name = name
