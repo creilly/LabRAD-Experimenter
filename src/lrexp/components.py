@@ -348,6 +348,8 @@ class NullUnit( Unit ):
         pass
     def __deepcopy__( self, memo ):
         return self
+    def __nonzero__( self ):
+        return False
 
 class Action( Function, Unit ):
     """
