@@ -196,10 +196,10 @@ class ClipBoardBrowser( QtGui.QDialog ):
                     if loopingComponent:
                         if QtGui.QMessageBox.information( self,
                                                           'Loop detected',
-                                                          'Selection rejected because <i><b>%s</b></i> would contain itself.  Create a copy?' % repr( loopingComponent ),
+                                                          'Selection rejected because <i><b>%s</b></i> would contain itself.  Create a copy of %s?' % ( repr( loopingComponent ), repr( child ) ),
                                                           QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                                                           defaultButton = QtGui.QMessageBox.No ) == QtGui.QMessageBox.Yes:
-                            ClipBoardModel().appendCopy( loopingComponent )
+                            ClipBoardModel().appendCopy( child )
                         return False
                     item = item.parent()
         return True
