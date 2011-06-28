@@ -75,7 +75,7 @@ class UnitDialog( ComponentEditDialog ):
 
         modeSelector.button( self.component.mode ).click()
 
-        self.tabWidget.addTab( nameEdit, 'Name' )
+        self.tabWidget.insertTab( 0, nameEdit, 'Name' )
         self.tabWidget.addTab( modeSelectorWidget, 'Execution Mode' )
 
         self.layout().addWidget( self.tabWidget, 1 )

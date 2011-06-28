@@ -8,16 +8,15 @@ import os, copy
 
 from PyQt4 import QtGui, QtCore
 
-from component import ComponentModel, updateModel
+from component import ComponentModel
 from globals import GlobalsEditWidget
 from menu import menubar, recentUnits, fileMenu, askToSave, _saveUnitAs
 from view import TreeView, TreeWidget
-from dialogs import input, sequence, parameter, componentgroup, scan, action, execute
+from dialogs import input, sequence, parameter, componentgroup, scan, action, execute, conditional, repeat
 from labradconnection import LRConnectionManager
 from clipboard import ClipBoardReorderWidget, ClipBoardModel
 
-from ..components import IUnit, Input, Global, Map, Result, Action, Sequence, Parameter, ScanRange, ArgumentList, Scan
-from ..util import loadUnit
+from ..components import IUnit, Input, Global, Map, Result, Action, Sequence, Parameter, ScanRange, ArgumentList, Scan, Conditional, Repeat
 
 class TitleLabel( QtGui.QLabel ):
     base = '<big><b>Experimenter:</b> '
@@ -39,7 +38,9 @@ class MainWindow( QtGui.QMainWindow ):
         ScanRange:componentgroup.ScanRangeDialog,
         Action:action.ActionDialog,
         Scan:scan.ScanDialog,
-        Sequence:sequence.SequenceDialog
+        Sequence:sequence.SequenceDialog,
+        Conditional:conditional.ConditionalDialog,
+        Repeat:repeat.RepeatDialog
         }
 
     def __init__( self ):
@@ -208,7 +209,7 @@ class MainWindow( QtGui.QMainWindow ):
     def quitApplication( self ):
         cxnMan = LRConnectionManager()
         if LRConnectionManager().connected:
-            cxnMan.connectionChanged.disconnect( self.connectionLost )
+            cxnMan.connectionChanged.disconnect()
             cxnMan.connection.disconnect()
         self.close()
 
