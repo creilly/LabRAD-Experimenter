@@ -30,7 +30,7 @@ class BaseInputDialog( ComponentEditDialog ):
 class ResultDialog( BaseInputDialog ):
     def __init__( self, parent, component ):
         super( ResultDialog, self ).__init__( parent, component )
-        self.model.addCycler( self.inputView, component.parentAction, self.matchTreeWidget.addButton( 'Result Action' ) )
+        self.matchModel.addCycler( self.inputView, component.parentAction, self.matchTreeWidget.addButton( 'Result Action' ) )
 
 class InputDialog( BaseInputDialog ):
     def __init__( self, parent, component ):
