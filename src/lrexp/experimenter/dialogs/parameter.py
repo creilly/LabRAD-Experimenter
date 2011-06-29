@@ -38,7 +38,8 @@ class ParameterDialog( ComponentEditDialog ):
         vLayout.addWidget( inputLabel, 1 )
         vLayout.addLayout( hLayout )
 
-        self.tabWidget.addTab( inputTab, 'input' )
+        self.tabWidget.insertTab( 0, inputTab, 'input' )
+        self.tabWidget.setCurrentIndex( 0 )
 
     def getNewInputSelector( self ):
         if self.inputSelector:

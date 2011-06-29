@@ -36,12 +36,14 @@ class ComponentGroupModeDialog( ComponentEditDialog ):
         self.setToolbar( component.mode )
         modeSelector.button( component.mode ).setChecked( True )
 
-        self.layout().addWidget( self.reorderWidget, 1 )
-        self.layout().addWidget( modeSelectorWidget )
+        widget = QtGui.QWidget()
+        widget.setLayout( QtGui.QVBoxLayout() )
 
-        tw = self.tabWidget
-        self.layout().removeWidget( tw )
-        tw.deleteLater()
+        widget.layout().addWidget( self.reorderWidget, 1 )
+        widget.layout().addWidget( modeSelectorWidget )
+
+        self.tabWidget.insertTab( 0, widget, 'Components' )
+        self.tabWidget.setCurrentIndex( 0 )
 
     @updateModel
     def addItem( self ):

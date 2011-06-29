@@ -75,6 +75,7 @@ class BaseComponentModel( QtGui.QStandardItemModel ):
                 button.clicked.connect( self.next )
             self.update()
         def next( self ):
+            if not self.items: return
             self.i = self.i % len( self.items )
             index = self.items[self.i].index()
             self.view.expandTo( index )

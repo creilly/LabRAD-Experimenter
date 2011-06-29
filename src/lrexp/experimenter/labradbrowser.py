@@ -39,7 +39,7 @@ class LabradItem( BaseFunctionModelItem ):
         super( LabradItem, self ).__init__()
         self.name = name
         self.setText( name )
-        self.getInfo = lambda: InfoWidget( '%s (%s)' % ( name, 'Server' if type is self.SERVER else 'Setting' ), doc )
+        self.getInfoWidget = lambda: InfoWidget( '%s (%s)' % ( name, 'Server' if type is LabradModel.SERVER else 'Setting' ), doc )
         self.type = type
 
 class OverloadItem( BaseFunctionModelItem ):
