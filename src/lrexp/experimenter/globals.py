@@ -5,6 +5,7 @@ Created on Apr 27, 2011
 '''
 from PyQt4 import QtCore, QtGui
 from ..components import Global
+from . import Shortcut
 from reorderlist import ReorderWidget, IReorderList
 from icons import editIcon
 
@@ -150,7 +151,7 @@ class GlobalsEditWidget( ReorderWidget ):
         reorderModel = IReorderList( GlobalsModel() )
         super( GlobalsEditWidget, self ).__init__( reorderModel, 'G' )
         editGlobal = self.toolbar.addAction( editIcon, 'Show edit dialog' )
-        editGlobal.setShortcut( QtGui.QKeySequence( 'Ctrl+G, Ctrl+V', QtGui.QKeySequence.NativeText ) )
+        editGlobal.setShortcut( Shortcut( 'Ctrl+G, Ctrl+V' ) )
         def getGlobalDialog():
             globalInput = reorderModel.getGlobal()
             if globalInput:
