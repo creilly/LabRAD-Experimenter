@@ -43,7 +43,7 @@ class MainWindow( QtGui.QMainWindow ):
         Repeat:repeat.RepeatDialog
         }
 
-    def __init__( self ):
+    def __init__( self, parent = None, windowFlags = QtCore.Qt.Window ):
         super( MainWindow, self ).__init__()
 
         self.setMenuBar( menubar )
