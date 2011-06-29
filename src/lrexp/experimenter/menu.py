@@ -9,6 +9,7 @@ from PyQt4 import QtGui, QtCore
 from component import ComponentModel
 from dialogs import getNewUnit, filedialog
 from clipboard import ClipBoardBrowser, ClipBoardModel
+from . import Shortcut
 from ..util import loadUnit, saveUnit
 from ..components import IUnit
 from .. import LREXPHOME
@@ -87,15 +88,15 @@ class RecentUnitsMenu( QtGui.QMenu ):
         self.currentFileChanged.emit( '' )
 
 newRoot = fileMenu.addAction( 'New root' )
-newRoot.setShortcut( QtGui.QKeySequence( 'Ctrl+N', QtGui.QKeySequence.NativeText ) )
+newRoot.setShortcut( Shortcut( 'Ctrl+N' ) )
 saveRoot = fileMenu.addAction( 'Save root' )
-saveRoot.setShortcut( QtGui.QKeySequence( 'Ctrl+S', QtGui.QKeySequence.NativeText ) )
+saveRoot.setShortcut( Shortcut( 'Ctrl+S' ) )
 saveRootAs = fileMenu.addAction( 'Save root as...' )
-saveRootAs.setShortcut( QtGui.QKeySequence( 'Ctrl+Shift+S', QtGui.QKeySequence.NativeText ) )
+saveRootAs.setShortcut( Shortcut( 'Ctrl+Shift+S' ) )
 loadRoot = fileMenu.addAction( 'Load root' )
-loadRoot.setShortcut( QtGui.QKeySequence( 'Ctrl+O', QtGui.QKeySequence.NativeText ) )
+loadRoot.setShortcut( Shortcut( 'Ctrl+O' ) )
 clipBoardRoot = fileMenu.addAction( 'Root from clip board' )
-clipBoardRoot.setShortcut( QtGui.QKeySequence( 'Ctrl+C', QtGui.QKeySequence.NativeText ) )
+clipBoardRoot.setShortcut( Shortcut( 'Ctrl+C' ) )
 recentUnits = RecentUnitsMenu()
 fileMenu.addMenu( recentUnits )
 

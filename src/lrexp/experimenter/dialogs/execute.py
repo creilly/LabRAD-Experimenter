@@ -4,7 +4,6 @@ Created on Jun 8, 2011
 @author: christopherreilly
 '''
 from PyQt4 import QtGui, QtCore
-from .. import lambdaSlot
 from ..component import BaseComponentModel, updateModel
 from ..view import TreeView, TreeWidget
 from ...components import Action, Scan, Sequence, Repeat, Conditional

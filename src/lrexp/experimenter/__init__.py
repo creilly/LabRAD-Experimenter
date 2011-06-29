@@ -1,9 +1,6 @@
-from PyQt4.QtCore import pyqtSlot
+from PyQt4 import QtGui
 
-def lambdaSlot( qObject, types, lambdaFunction ):
-    if not hasattr( qObject, '_lambdaSlots' ):
-        qObject._lambdaSlots = []
-    slot = pyqtSlot( *types )( lambdaFunction )
-    qObject._lambdaSlots.append( slot )
-    return slot
+class Shortcut( QtGui.QKeySequence ):
+    def __init__( self, shortcut ):
+        super( Shortcut, self ).__init__( shortcut )
 

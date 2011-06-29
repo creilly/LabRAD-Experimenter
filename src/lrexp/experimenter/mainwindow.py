@@ -15,6 +15,7 @@ from view import TreeView, TreeWidget
 from dialogs import input, sequence, parameter, componentgroup, scan, action, execute, conditional, repeat
 from labradconnection import LRConnectionManager
 from clipboard import ClipBoardReorderWidget, ClipBoardModel
+from . import Shortcut
 
 from ..components import IUnit, Input, Global, Map, Result, Action, Sequence, Parameter, ScanRange, ArgumentList, Scan, Conditional, Repeat
 
@@ -48,7 +49,7 @@ class MainWindow( QtGui.QMainWindow ):
 
         self.setMenuBar( menubar )
         executeRoot = menubar.addMenu( 'Execute' ).addAction( 'Execute Root' )
-        executeRoot.setShortcut( QtGui.QKeySequence( 'Ctrl+E', QtGui.QKeySequence.NativeText ) )
+        executeRoot.setShortcut( Shortcut( 'Ctrl+E' ) )
         executeRoot.setEnabled( False )
         executeRoot.triggered.connect( lambda: self.executeUnit( ComponentModel().rootComponent ) )
         ComponentModel().endUpdate.connect( lambda: executeRoot.setEnabled( ComponentModel().rootConfigured ) )
@@ -98,9 +99,9 @@ class MainWindow( QtGui.QMainWindow ):
 
         viewMenu = menubar.addMenu( 'View' )
         viewMenu.addAction( dockGlobals.toggleViewAction() )
-        dockGlobals.toggleViewAction().setShortcut( QtGui.QKeySequence( 'Ctrl+Shift+G', QtGui.QKeySequence.NativeText ) )
+        dockGlobals.toggleViewAction().setShortcut( Shortcut( 'Ctrl+Shift+G' ) )
         viewMenu.addAction( dockClipBoard.toggleViewAction() )
-        dockClipBoard.toggleViewAction().setShortcut( QtGui.QKeySequence( 'Ctrl+Shift+C', QtGui.QKeySequence.NativeText ) )
+        dockClipBoard.toggleViewAction().setShortcut( Shortcut( 'Ctrl+Shift+C' ) )
 
         viewMenu.addSeparator().setText( 'Tree item size' )
 
@@ -119,7 +120,7 @@ class MainWindow( QtGui.QMainWindow ):
 
         labradConnection = LRConnectionManager( self )
         connectLabrad = menubar.addMenu( 'LabRAD' ).addAction( 'Connect' )
-        connectLabrad.setShortcut( QtGui.QKeySequence( 'Ctrl+L', QtGui.QKeySequence.NativeText ) )
+        connectLabrad.setShortcut( Shortcut( 'Ctrl+L' ) )
         connectLabrad.triggered.connect( labradConnection.connect )
 
         labradConnection.connectionChanged.connect( lambda connected: connectLabrad.setEnabled( not connected ) )
@@ -135,7 +136,7 @@ class MainWindow( QtGui.QMainWindow ):
         labradConnection.connect()
 
         quit = fileMenu.addAction( 'Quit' )
-        quit.setShortcut( QtGui.QKeySequence( 'Ctrl+Q', QtGui.QKeySequence.NativeText ) )
+        quit.setShortcut( Shortcut( 'Ctrl+Q' ) )
         quit.triggered.connect( self.quitApplication )
 
     def connectionLost( self ):

@@ -11,6 +11,8 @@ from icons import arrowIcons
 
 from zope.interface import Interface, Attribute
 
+from . import Shortcut
+
 class IReorderList( Interface ):
     """
     Classes that implement this interface can interact with the ReorderWidget
@@ -65,7 +67,7 @@ class ReorderWidget( QtGui.QWidget ):
                                                        ( self.RAISE, self.LOWER, self.ADD, self.REMOVE ) ):
             action = QtGui.QAction( arrowIcons[icon], tip, toolbar )
             action.triggered.connect( modFunc( function, keyword ) )
-            action.setShortcut( QtGui.QKeySequence( 'Ctrl+%c, Ctrl+%c' % ( baseKey, shortcut ), QtGui.QKeySequence.NativeText ) )
+            action.setShortcut( Shortcut( 'Ctrl+%c, Ctrl+%c' % ( baseKey, shortcut ) ) )
             self.enabledDict[keyword] = action
             toolbar.addAction( action )
 
