@@ -4,7 +4,7 @@ Created on Jun 11, 2011
 @author: christopherreilly
 '''
 from PyQt4 import QtGui
-from ..components import Action, Scan, Sequence, Repeat, Conditional, Input, Global, Map, Label, ArgumentList, Arguments, Result, ScanRange
+from ..components import Action, Scan, Sequence, Repeat, Conditional, Input, Global, Map, Label, ArgumentList, Arguments, Result, ScanRange, NullUnit
 import os
 iconFileBase = os.path.join( os.path.dirname( globals()['__file__'] ), 'icons/' )
 compIcons = {}
@@ -19,7 +19,8 @@ for unit, name in {Action:'action',
                    ScanRange:'scanrange',
                    ArgumentList:'argumentlist',
                    Arguments:'arguments',
-                   Result:'result'}.items():
+                   Result:'result',
+                   NullUnit:'nullunit'}.items():
 
 
     compIcons[unit] = QtGui.QIcon( os.path.join( iconFileBase, '%s.svg' % name ) )

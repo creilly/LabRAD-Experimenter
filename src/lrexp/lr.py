@@ -3,8 +3,7 @@ Created on Feb 9, 2011
 
 @author: christopherreilly
 '''
-from util import LRExpError
-from labrad.types import Error, parseTypeTag, LRCluster, LRNone
+from labrad.types import parseTypeTag, LRCluster, LRNone
 
 class LabradSetting( object ):
     """

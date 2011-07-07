@@ -40,12 +40,11 @@ class Input( BaseComponent ):
         value - used on execution
         description - should be short
     """
-    value = None
-    description = ''
 
     def __init__( self, value = None ):
-        if value is not None:
-            self.value = value
+        self.value = value
+        self.description = ''
+        self.name = ''
 
     def __repr__( self ):
         def shortRepr( s ):
@@ -54,7 +53,7 @@ class Input( BaseComponent ):
             if len( s ) > max:
                 return s[:max] + '...'
             return s
-        return '%s -> %s' % ( self.__class__.__name__, shortRepr( self.value ) )
+        return '%s -> %s' % ( self.name if self.name else self.__class__.__name__, shortRepr( self.value ) )
 
     @property
     def children( self ):
@@ -63,6 +62,8 @@ class Input( BaseComponent ):
 class Global( Input ):
     def __init__( self, name ):
         self.name = name
+        self.value = None
+        self.description = ''
 
     def __repr__( self ):
         return '%s (Global) -> %s' % ( self.name, str( self.value ) )
@@ -263,6 +264,10 @@ class Map( Function, Input ):
     """
     An Input that maps many inputs to a single value using a function
     """
+    def __init__( self ):
+        self.name = ''
+        self.description = ''
+
     #===========================================================================
     # Properties
     #===========================================================================
@@ -275,10 +280,7 @@ class Map( Function, Input ):
             raise LRExpError( 'No function assigned to Map' )
 
     def __repr__( self ):
-        if self.function is None:
-            return 'Map: No function assigned'
-        else:
-            return 'Map: %s' % self.function.__name__
+        return '%s -> %s' % ( ( '%s (Map)' % self.name ) if self.name else 'Map', self.function.__name__ if self.function else 'No function' )
 
 class IUnit( IComponent ):
     """
@@ -345,15 +347,18 @@ class Unit( BaseComponent ):
 
 nullInstance = None
 class NullUnit( Unit ):
-    def __new__( cls ):
+    def __new__( cls, name = 'Doesnt Matter' ):
         global nullInstance
         if nullInstance:
             return nullInstance
         nullInstance = super( NullUnit, cls ).__new__( cls )
         super( NullUnit, cls ).__init__( nullInstance, 'Null Unit' )
         return nullInstance
-    def __init__( self ):
+    def __init__( self, name = 'Doesnt Matter' ):
         pass
+    @property
+    def configured( self ):
+        return True
     def __deepcopy__( self, memo ):
         return self
     def __nonzero__( self ):
@@ -367,10 +372,10 @@ class Action( Function, Unit ):
         def __init__( self, parentAction ):
             self.parentAction = parentAction
             self.value = None
-            self.description = 'Result for Action: %s' % parentAction.name
+            self.description = ''
 
         def __repr__( self ):
-            return 'Result for %s: %s' % ( self.parentAction.name, repr( self.value ) )
+            return 'Result for Action: %s' % self.parentAction.name
 
     def __init__( self, name ):
         super( Function, self ).__init__( name )
@@ -595,7 +600,7 @@ class Conditional( Unit ):
     def __init__( self, name ):
         super( Conditional, self ).__init__( name )
         self.trueUnit = Label( 'True Unit', Sequence( 'If True' ) )
-        self.falseUnit = Label( 'False Unit', Sequence( 'If False' ) )
+        self.falseUnit = Label( 'False Unit', NullUnit() )
         self.condition = Parameter( 'Condition', Input( True ) )
 
     def __iter__( self ):

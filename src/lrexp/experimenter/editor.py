@@ -114,6 +114,8 @@ class Editor( QtGui.QGroupBox ):
 
     editCreated = QtCore.pyqtSignal( Edit )
 
+    MAXLENGTH = 300
+
     def __init__( self, title, parent = None ):
         super( Editor, self ).__init__( title, parent )
         self.setLayout( QtGui.QVBoxLayout() )
@@ -128,7 +130,17 @@ class Editor( QtGui.QGroupBox ):
         self.layout().addLayout( buttonRow )
 
     def setText( self, text ):
-        self.text.setText( text )
+        text = text.replace( '\n', '<br>' )
+        self.layout().removeWidget( self.text )
+        self.text.deleteLater()
+        if len( text ) > self.MAXLENGTH:
+            self.text = QtGui.QTextEdit( text )
+            self.text.setReadOnly( True )
+        else:
+            self.text = QtGui.QLabel( text )
+            self.text.setWordWrap( True )
+        self.layout().insertWidget( 0, self.text, 1 )
+
 
     def getText( self ):
         return self.text.text()

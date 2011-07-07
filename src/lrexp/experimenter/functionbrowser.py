@@ -3,7 +3,7 @@ Created on Apr 28, 2011
 
 @author: christopherreilly
 '''
-import os, types, inspect, __builtin__
+import os, types, inspect, time
 
 from PyQt4 import QtGui, QtCore
 
@@ -67,16 +67,18 @@ class ModuleItem( BaseFunctionModelItem ):
         self.object = obj
         self.setText( obj.__name__.split( '.' )[-1] + ' (M)' )
         self.setToolTip( obj.__name__ )
-        path, file = os.path.split( obj.__file__ )
-        if os.path.splitext( file )[0] == '__init__':
-            modNames = ['.'.join( ( obj.__name__, name ) ) for name, ext in [os.path.splitext( file ) for file in os.listdir( path )] if ext == '.py' and name != '__init__']
-            for modName in modNames:
-                try:
-                    self.appendFunctionModelItem( __import__( modName, fromlist = modName ) )
-                except ImportError:
-                    continue
-        for function in filter( lambda x: type( x ) is types.FunctionType, obj.__dict__.values() ):
+        for function in sorted( filter( lambda x: type( x ) is types.FunctionType, obj.__dict__.values() ), key = lambda f: f.__name__ ):
             self.appendFunctionModelItem( function )
+        if hasattr( obj, '__file__' ):
+            path, file = os.path.split( obj.__file__ )
+            if os.path.splitext( file )[0] == '__init__':
+                modNames = set( ['.'.join( ( obj.__name__, name ) ) for name, ext in sorted( [os.path.splitext( file ) for file in os.listdir( path )] ) if name and name != '__init__' ] )
+                for modName in modNames:
+                    try:
+                        module = __import__( modName, fromlist = modName )
+                        self.appendFunctionModelItem( module )
+                    except ImportError:
+                        continue
         if not self.rowCount(): self.setText( '%s - Empty' % self.text() )
 
     def getInfoWidget( self ):
@@ -191,8 +193,9 @@ class InfoWidget( QtGui.QWidget ):
         layout.addWidget( QtGui.QLabel( '<big>%s</big>' % title ) )
         infoFrame = QtGui.QFrame()
         infoFrame.setLayout( QtGui.QVBoxLayout() )
-        infoLabel = QtGui.QLabel( info.replace( '\n', '<br>' ) )
-        infoFrame.layout().addWidget( infoLabel )
-        infoLabel.setWordWrap( True )
+        info = info.replace( '\n', '<br>' )
+        text = QtGui.QTextEdit( info.replace( '\n', '<br>' ) )
+        text.setReadOnly( True )
+        infoFrame.layout().addWidget( text )
         infoFrame.setFrameStyle( QtGui.QFrame.Box )
         layout.addWidget( infoFrame, 1 )

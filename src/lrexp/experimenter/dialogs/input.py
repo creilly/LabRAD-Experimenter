@@ -30,9 +30,23 @@ class BaseInputDialog( ComponentEditDialog ):
 class ResultDialog( BaseInputDialog ):
     def __init__( self, parent, component ):
         super( ResultDialog, self ).__init__( parent, component )
-        self.matchModel.addCycler( self.inputView, component.parentAction, self.matchTreeWidget.addButton( 'Result Action' ) )
+        self.matchModel.addCycler( self.matchView, component.parentAction, self.matchTreeWidget.addButton( 'Result Action' ) )
 
-class InputDialog( BaseInputDialog ):
+class NamedInputDialog( BaseInputDialog ):
+    def __init__( self, parent, component ):
+        super( NamedInputDialog, self ).__init__( parent, component )
+
+        nameEditor = self.nameEditor = TextEditor( 'Name', 'Enter new name' )
+        nameEditor.setText( str( component.name ) )
+        @updateModel
+        def editName( name ):
+            nameEditor.setText( name )
+            component.name = name
+        nameEditor.editCreated.connect( lambda edit: editName( edit.value ) )
+        self.tabWidget.insertTab( 0, nameEditor, 'Name' )
+
+
+class InputDialog( NamedInputDialog ):
     def __init__( self, parent, component ):
         super( InputDialog, self ).__init__( parent, component )
         try:
@@ -56,20 +70,10 @@ class GlobalDialog( InputDialog ):
 
     def __init__( self, parent, component ):
         super( GlobalDialog, self ).__init__( parent, component )
-        nameEditor = TextEditor( 'Name', 'Enter new Global name' )
-        nameEditor.setText( str( component.name ) )
-        @updateModel
-        def editName( name ):
-            nameEditor.setText( name )
-            component.name = name
-        nameEditor.editCreated.connect( lambda edit: editName( edit.value ) )
-        self.tabWidget.insertTab( 1, nameEditor, 'Name' )
 
-    def modelUpdated( self ):
-        super( GlobalDialog, self ).modelUpdated()
-        GlobalsModel().updateGlobal( self.component )
+        self.nameEditor.editCreated.connect( lambda edit: GlobalsModel().updateGlobal( self.component ) )
 
-class MapDialog( BaseInputDialog ):
+class MapDialog( NamedInputDialog ):
     def __init__( self, parent, component ):
         super( MapDialog, self ).__init__( parent, component )
         self.tabWidget.insertTab( 0, FunctionEditorUpdater( component, 'Mapping function', self ), 'Map' )

@@ -11,7 +11,7 @@ from ..reorderlist import IReorderList
 from ..view import BaseListView, TreeView, TreeWidget
 from ..clipboard import ClipBoardBrowser
 
-from ...components import Action, Scan, Sequence, Repeat, Conditional, Unit, IUnit
+from ...components import Action, Scan, Sequence, Repeat, Conditional, Unit, IUnit, NullUnit
 from ...util import loadUnit
 
 class ComponentEditDialog( QtGui.QDialog ):
@@ -97,7 +97,8 @@ class NewUnitDialog( QtGui.QDialog ):
                 'Scan':Scan,
                 'Sequence':Sequence,
                 'Repeat':Repeat,
-                'Conditional':Conditional
+                'Conditional':Conditional,
+                'Null':NullUnit
                 }
     def __init__( self ):
         super( NewUnitDialog, self ).__init__()
@@ -106,7 +107,7 @@ class NewUnitDialog( QtGui.QDialog ):
 
         unitType = self.unitType = QtGui.QComboBox()
 
-        for key in self.unitDict:
+        for key in sorted( self.unitDict ):
             unitType.addItem( key )
 
         buttonLayout = QtGui.QHBoxLayout()
@@ -158,7 +159,7 @@ class UnitSelectorWidget( QtGui.QGroupBox ):
 
     def new( self ):
         unit = getNewUnit()
-        if not unit: return
+        if unit is None: return
         self.unitSelected.emit( unit )
 
     def load( self ):

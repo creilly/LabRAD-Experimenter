@@ -46,7 +46,10 @@ class ExecuteDialog( QtGui.QDialog ):
             cls, state = chain.pop()
             unitText = repr( item.component )
             if cls is Action:
-                item.setText( '%s -> %s' % ( unitText, str( state ) ) )
+                stateText = str( state )
+                if len( stateText ) > 50:
+                    stateText = stateText[:50 - 3] + '...'
+                item.setText( '%s -> %s' % ( unitText, stateText ) )
                 continue
             if cls in ( Sequence, Scan, Repeat ):
                 if state is not None:

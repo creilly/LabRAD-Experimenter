@@ -22,11 +22,12 @@ class ConditionalDialog( UnitDialog ):
             return setNewUnit
 
         for unitType in ( self.TRUE, self.FALSE ):
-            unit = component.trueUnit if unitType else component.falseUnit
+            label = component.trueUnit if unitType else component.falseUnit
+            unit = label.component
             model = BaseComponentModel()
             model.setRoot( unit )
             unitSelector = UnitSelectorWidget( component )
-            unitSelector.unitSelected.connect( newUnitSetter( unit, model ) )
+            unitSelector.unitSelected.connect( newUnitSetter( label, model ) )
             view = TreeView()
             view.setModel( model )
 
