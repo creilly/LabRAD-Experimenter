@@ -1,7 +1,7 @@
 '''
-Created on Apr 28, 2011
+A model/view structure for browsing functions in python packages.
 
-@author: christopherreilly
+Modules are automatically parsed for information about child modules/functions.
 '''
 import os, types, inspect, time
 

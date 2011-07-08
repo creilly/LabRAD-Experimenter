@@ -25,6 +25,7 @@ class ExecuteDialog( QtGui.QDialog ):
         treeWidget = TreeWidget( view, 'Execute Unit' )
         next = treeWidget.addButton( 'Next' )
         run = treeWidget.addButton( 'Run' )
+        run.setDefault( True )
         pause = self.pause = treeWidget.addButton( 'Pause' )
         pause.setEnabled( False )
         next.clicked.connect( self.next )

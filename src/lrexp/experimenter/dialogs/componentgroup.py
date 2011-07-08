@@ -5,7 +5,8 @@ Created on May 1, 2011
 '''
 from PyQt4 import QtGui, QtCore
 
-from . import ComponentEditDialog, ComponentReorderList
+from . import ComponentEditDialog
+from ..componentreorder import ComponentReorderList
 from ..inputselector import InputSelector
 from ..reorderlist import ReorderWidget
 from ..component import updateModel

@@ -6,7 +6,9 @@ Created on May 25, 2011
 from __future__ import with_statement
 from PyQt4 import QtGui, QtCore
 
-from . import UnitDialog, getUnit, ComponentReorderList
+from . import UnitDialog
+from unit import getUnit
+from ..componentreorder import ComponentReorderList
 from ..reorderlist import ReorderWidget, IReorderList
 from ..view import BaseListView
 from ..component import ComponentModel, updateModel

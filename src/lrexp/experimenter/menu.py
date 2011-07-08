@@ -7,7 +7,8 @@ from __future__ import with_statement
 import os, pickle, inspect
 from PyQt4 import QtGui, QtCore
 from component import ComponentModel
-from dialogs import getNewUnit, filedialog
+from dialogs import filedialog
+from dialogs.unit import getNewUnit
 from clipboard import ClipBoardBrowser, ClipBoardModel
 from . import Shortcut
 from ..util import loadUnit, saveUnit

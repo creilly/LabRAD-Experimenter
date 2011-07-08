@@ -1,7 +1,11 @@
 '''
-Created on Jun 15, 2011
+The clip board functions as a workspace while creating the root unit tree.
 
-@author: christopherreilly
+Drag units from the tree into the clipboard, where they can be temporarily stored or made more easily accessible.
+
+Scans, for instance, can select from the clipboard when assigning its scanUnit.
+
+The clipboard has methods in place to detect units looping in on themselves and prevent their insertion into the tree structure.
 '''
 import copy
 

@@ -3,8 +3,6 @@ Created on May 2, 2011
 
 @author: christopherreilly
 '''
-import os
-
 from PyQt4 import QtGui, QtCore
 
 from icons import arrowIcons

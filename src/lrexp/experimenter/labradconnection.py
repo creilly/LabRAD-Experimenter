@@ -1,6 +1,9 @@
+"""
+Manages labrad connectivity.
+TODO: Disconnect capability
+"""
 import labrad
-import twisted
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtCore
 
 from ..lr import Client
 

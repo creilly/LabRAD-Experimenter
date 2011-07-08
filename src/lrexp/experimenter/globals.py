@@ -1,7 +1,7 @@
 '''
-Created on Apr 27, 2011
+Manage list of Globals in a Excel-like fashion.
 
-@author: christopherreilly
+Also contains read-only list of a Globals to select globals
 '''
 from PyQt4 import QtCore, QtGui
 from ..components import Global

@@ -1,7 +1,5 @@
 '''
-Created on Apr 29, 2011
-
-@author: christopherreilly
+Provides a framework for user to edit various values (strings, numbers, functions, etc.)
 '''
 import yaml, types, __builtin__, math, time, os
 from PyQt4 import QtGui, QtCore
@@ -102,6 +100,7 @@ class LabradSettingGetter( BaseEditGetter ):
         ld.labradSettingSelected.connect( functionSelected )
     def getEdit( self ):
         self.labradDialog.show()
+
 class IEditor( Interface ):
     editCreated = Attribute( "Signal" )
     def addEditGetter( getter, text ):

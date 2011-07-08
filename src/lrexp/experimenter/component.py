@@ -1,7 +1,5 @@
 '''
-Created on Apr 26, 2011
-
-@author: christopherreilly
+Contains the classes for models that represent Component trees.
 '''
 from PyQt4 import QtGui, QtCore
 
@@ -49,6 +47,7 @@ class BaseComponentItem( QtGui.QStandardItem ):
         self.setFont( font )
 
 class ComponentItem( BaseComponentItem ):
+
     def __init__( self, component ):
         super( ComponentItem, self ).__init__( component )
         self.setDragEnabled( True )
@@ -66,6 +65,7 @@ class ComponentItem( BaseComponentItem ):
         super( ComponentItem, self ).update()
 
 class BaseComponentModel( QtGui.QStandardItemModel ):
+
     Item = BaseComponentItem
     class Cycler( QtCore.QObject ):
         def __init__( self, model, view, condition, button = None ):
@@ -212,6 +212,11 @@ class ComponentModel( BaseComponentModel ):
         return bool( self.rootComponent ) and self.rootComponent.configured
 
 def updateModel( f ):
+    """
+    Decorator.
+    
+    Wrap functions in this to update the ComponentModel singleton after the wrapped function completes.
+    """
     def execAndUpdate( *args, **kwargs ):
         try:
             f( *args, **kwargs )
@@ -220,6 +225,9 @@ def updateModel( f ):
     return execAndUpdate
 
 class DontUpdate( Exception ):
+    """
+    Raise this exception in a function to be decorated with updateModel if you want to prevent updating.
+    """
     pass
 
 class ColorComponentItem( BaseComponentItem ):
@@ -233,7 +241,9 @@ class ColorComponentItem( BaseComponentItem ):
         super( ColorComponentItem, self ).update()
 
 class ColorComponentModel( BaseComponentModel ):
-
+    """
+    Simplifies assigning colors to components that satisfy certain conditions.
+    """
     Item = ColorComponentItem
 
     class ColorCondition( object ):
@@ -258,6 +268,12 @@ class ColorComponentModel( BaseComponentModel ):
         return self.insertColorCondition( len( self.conditions ), condition, color, weight )
 
     def insertColorCondition( self, index, condition, color, weight = None ):
+        """
+        Condition can either be a callable or a component.
+        If it is a component, the condition is to check for the equality of the identities:
+        
+        component -> lambda componentToCheck: componentToCheck is component
+        """
         colorCondition = self.ColorCondition( self, condition, color, weight )
         self.conditions.insert( index, colorCondition )
         self.update()

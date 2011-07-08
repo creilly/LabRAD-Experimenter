@@ -4,7 +4,8 @@ Created on Jun 5, 2011
 @author: christopherreilly
 '''
 from PyQt4 import QtGui
-from . import UnitDialog, UnitSelectorWidget
+from . import UnitDialog
+from unit import UnitSelectorWidget
 from ..view import TreeView, TreeWidget
 from ..component import ColorComponentModel, updateModel, DontUpdate
 from ...components import Input
