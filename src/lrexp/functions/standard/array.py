@@ -36,4 +36,17 @@ def clearList( collection ):
         collection.pop()
 
 def extend( toExtend, extendedBy ):
+    """
+    Extend a list by another list
+    """
     toExtend.extend( extendedBy )
+
+def summation( *summands ):
+    """
+    Performs successive addition operations on each element in the list.
+    Elements can be strings, lists, numbers, or anything with defined behavior for the '+' operator.
+    Returns the element if only one element and zero for no elements.
+    """
+    if len( summands ) < 2:
+        return summands[0] if len( summands ) else 0
+    return reduce( lambda x, y: x + y, summands )

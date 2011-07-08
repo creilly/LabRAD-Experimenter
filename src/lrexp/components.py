@@ -10,9 +10,16 @@ from util import LRExpError, contains
 from lr import LabradSetting
 
 class IComponent( Interface ):
+    """
+    Component interface.
+    All components must implement a children attribute to be compatible with the tree structure of experiments.
+    """
     children = Attribute( "A list of the unit's children" )
 
 class BaseComponent( object ):
+    """
+    Abstract base class for components.
+    """
     implements( IComponent )
 
     @property
@@ -20,6 +27,9 @@ class BaseComponent( object ):
         return []
 
 class Label( BaseComponent ):
+    """
+    Contains a single component, basically a nametag.
+    """
     def __init__( self, name, component ):
         self.name = name
         self.component = component
@@ -33,12 +43,11 @@ class Label( BaseComponent ):
 
 class Input( BaseComponent ):
     """
-    Every Parameter possesses an Input (or a subclass).
+    The basic variable object for lrexp.
     
-    Inputs contain these properties:
-    
-        value - used on execution
-        description - should be short
+    An Input is a kind of pointer.  lrexp deferences the Input by accessing its value attribute.
+      
+    Possesses optional name and description attributes.
     """
 
     def __init__( self, value = None ):
@@ -60,6 +69,11 @@ class Input( BaseComponent ):
         return []
 
 class Global( Input ):
+    """
+    A special type of Input.
+    
+    The Experimenter GUI looks for Globals in the tree and allows top level access to their attributes.
+    """
     def __init__( self, name ):
         self.name = name
         self.value = None
@@ -69,9 +83,15 @@ class Global( Input ):
         return '%s (Global) -> %s' % ( self.name, str( self.value ) )
 
     def __deepcopy__( self, memo ):
+        """
+        Trying to copy a Global returns the Global itself.
+        """
         return self
 
 class ComponentGroup( BaseComponent ):
+    """
+    Base class for components who hold many components.
+    """
     implements( IComponent )
     def __init__( self, name, *components ):
         self.name = name
@@ -97,10 +117,16 @@ class ComponentGroup( BaseComponent ):
         while self.components: self.components.pop()
 
 class Arguments( ComponentGroup ):
+    """
+    Represents the collection of function arguments.
+    """
     def __init__( self, *arguments ):
         super( Arguments, self ).__init__( 'Arguments', *arguments )
 
 class ArgumentList( ComponentGroup ):
+    """
+    Represents a function's list argument (if it has one)
+    """
     MONO = 0
     POLY = 1
 
@@ -138,9 +164,7 @@ class ArgumentList( ComponentGroup ):
 
 class Parameter( BaseComponent ):
     """
-    Parameter instances serve as a way for a variable to interface with the Unit framework.
-    
-    They possess a name, Input instance (or subclass), and an optional description.
+    Holds function arguments and special Unit attributes.
     """
     implements( IComponent )
     def __init__( self, name, input = None, description = '' ):
@@ -167,9 +191,16 @@ class Parameter( BaseComponent ):
     def children( self ):
         return [self.input]
 
-class Keyword( Parameter ): pass
+class Keyword( Parameter ):
+    """
+    For use with a functions dictionary argument.
+    """
+    pass
 
 class KeywordArguments( ComponentGroup ):
+    """
+    Represents a function's dictionary argument (if it has one)
+    """
     implements( IComponent )
     def __init__( self ):
         super( KeywordArguments, self ).__init__( 'Key-value pairs' )
@@ -284,9 +315,8 @@ class Map( Function, Input ):
 
 class IUnit( IComponent ):
     """
-    An object capable of incremental execution; the smallest part of an experiment
+    An object capable of incremental execution; experiments are composed of trees of units.
     """
-
     configured = Attribute( "A boolean indicating if the unit is ready for execution" )
 
     def __iter__():
@@ -295,6 +325,15 @@ class IUnit( IComponent ):
         """
 
 class Unit( BaseComponent ):
+    """
+    Base class for units.
+    
+    Defines the modes of execution:
+    
+        PROBE: Execute child units without altering their mode.
+        STEP: Execute child units as though they were in ALL mode.
+        ALL: Completes unit execution all at once.
+    """
     implements( IUnit )
 
     #Smallest step
@@ -347,6 +386,11 @@ class Unit( BaseComponent ):
 
 nullInstance = None
 class NullUnit( Unit ):
+    """
+    Does nothing.  Is a singleton (like python's None).
+    
+    Useful in Conditions, as place holders, etc.
+    """
     def __new__( cls, name = 'Doesnt Matter' ):
         global nullInstance
         if nullInstance:
@@ -366,7 +410,9 @@ class NullUnit( Unit ):
 
 class Action( Function, Unit ):
     """
-    A Unit that calls a function with specified arguments when the next() method is called.  Only operates in one mode.
+    A Unit that calls a function with specified arguments when the next() method is called.
+    
+    Completes execution in one step regardless of mode.
     """
     class Result( Input ):
         def __init__( self, parentAction ):
@@ -403,6 +449,17 @@ class Action( Function, Unit ):
 Result = Action.Result
 
 class ScanRange( ComponentGroup ):
+    """
+    Contains the values for the Scan Unit to scan over.
+    
+    There exist four different scan modes:
+    
+        DELTA: Specify beginning, end, and distance between steps
+        STEPS: Specify beginning, end, and number of steps in between
+        COLLECTION: Iterate over the value attributes of a group of inputs.
+        LIST: Iterate over a single input, whose value attribute is a collection.
+    """
+
     DELTA = 0
     STEPS = 1
     COLLECTION = 2
@@ -464,11 +521,11 @@ class ScanRange( ComponentGroup ):
 
 class Scan( Unit ):
     """
-    Performs a scan over a specified unit for a specified range of values (floats).
+    The analog of a python 'for' loop.
     
-    A scan possesses a scanUnit and scanInput.  The scanInput is expected to be a reference to an Input instance that is contained inside of the scanUnit.
-    
-    When we execute a scanUnit, it will set the scanInput's value member for each value of the range ( n equally spaced steps between min and max where n is specified by the steps parameter ), and then execute the entire scanUnit.
+    Possesses a configurable Scan Range that specifies what you iterate over.
+    Possesses a Scan Input whose value attribute is set to each item in the Scan Range's collection.
+    Possesses a Scan Unit that is executed for each time the Scan Input's value is set to a new item in the Scan Range's collection. 
     """
 
     MARKEDFORSCANNING = '*** Marked for scanning ***'
@@ -566,7 +623,6 @@ class Repeat( Unit ):
     """
     Executes a unit a specified number of times.
     """
-
     def __init__( self, name = None, repeatUnit = None, repeats = 1 ):
         super( Repeat, self ).__init__( name )
         self.repeatUnit = repeatUnit if repeatUnit else Sequence( 'Unnamed sequence' )

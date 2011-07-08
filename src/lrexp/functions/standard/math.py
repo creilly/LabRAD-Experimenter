@@ -36,3 +36,4 @@ def absValue( number ):
     Returns the absolute value
     """
     return abs( number )
+
