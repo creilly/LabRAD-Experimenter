@@ -1,7 +1,5 @@
 '''
-Created on Jul 8, 2011
-
-@author: christopherreilly
+Dialogs and functions to create new units, load old ones from file, and select existing units from the clip board.
 '''
 from PyQt4 import QtGui, QtCore
 

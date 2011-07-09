@@ -1,12 +1,18 @@
-'''
-Created on Feb 10, 2011
-
-@author: christopherreilly
-'''
 from __future__ import with_statement
 import pickle
 
 def runExperiment( unit, steps = None , reset = True, callback = None, *args, **kwargs ):
+    """
+    Executes the unit.
+    
+    If steps is specified, only execute at most the specified number of steps.
+    
+    If execution has not completed before the number of steps specified, reset determines whether or not to initialize the unit.
+    
+    By default, reset is true.
+    
+    If callback is specified, the chain is passed as the first argument to callback, with whatever remaining arguments and keyword arguments coming after.
+    """
     def doNothing( c, *args, **kwargs ): pass
     if callback is None: callback = doNothing
     for i, chain in enumerate( unit ):
@@ -17,9 +23,8 @@ def runExperiment( unit, steps = None , reset = True, callback = None, *args, **
 
 def saveUnit( unit, filename ):
     """
-    Saves unit as a pickle file with .lre extension.
-    
-    So don't put .lre at the end of filename argument.
+    Saves unit as a pickle file.
+    It is recommended that you use the .lre extension for clarity.
     """
     unit.initialize()
     with open( filename, 'wb' ) as file:
@@ -28,9 +33,7 @@ def saveUnit( unit, filename ):
 
 def loadUnit( filename ):
     """
-    Loads an unit from a .lre file with name filename.
-    
-    Returns an instance of the unit.
+    Loads a unit from file
     """
     with open( filename, 'rb' ) as file:
         unit = pickle.load( file )
@@ -42,17 +45,10 @@ class LRExpError( Exception ):
     """
     pass
 
-class LRExpSignal( Exception ):
-    """
-    Used to track execution state.
-    """
-    def __init__( self, chain ):
-        self.chain = chain
-
-    def __repr__( self ):
-        return repr( self.chain )
-
 def contains( parent, target ):
+    """
+    Looks recursively through the parent to see if the target is among its descendants.
+    """
     for child in parent.children:
         if child is target or contains( child, target ): return True
     return False

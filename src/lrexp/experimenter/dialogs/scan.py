@@ -1,8 +1,3 @@
-'''
-Created on Jun 5, 2011
-
-@author: christopherreilly
-'''
 from PyQt4 import QtGui
 from . import UnitDialog
 from unit import UnitSelectorWidget
@@ -11,6 +6,9 @@ from ..component import ColorComponentModel, updateModel, DontUpdate
 from ...components import Input
 
 class ScanDialog( UnitDialog ):
+    """
+    Widgets to view and set both the scanInput and scanUnit
+    """
     def __init__( self, parent, component ):
         super( ScanDialog, self ).__init__( parent, component )
 

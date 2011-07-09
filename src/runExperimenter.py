@@ -1,7 +1,5 @@
 '''
-Created on Jun 2, 2011
-
-@author: christopherreilly
+Run this script to launch the Experimenter GUI
 '''
 def run():
     import sys

@@ -1,8 +1,3 @@
-'''
-Created on Feb 9, 2011
-
-@author: christopherreilly
-'''
 from labrad.types import parseTypeTag, LRCluster, LRNone
 
 class LabradSetting( object ):

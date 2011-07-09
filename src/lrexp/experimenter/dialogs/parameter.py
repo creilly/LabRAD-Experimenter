@@ -1,9 +1,4 @@
-'''
-Created on May 1, 2011
-
-@author: christopherreilly
-'''
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 
 from . import ComponentEditDialog
 from ..inputselector import InputSelector
@@ -16,6 +11,9 @@ class InputLabel( QtGui.QLabel ):
         self.setText( '<b>input</b>: %s' % ( repr( input ) if input else '<i>uninitialized</i>' ) )
 
 class ParameterDialog( ComponentEditDialog ):
+    '''
+    Includes widget to assign another input to the parameter's input attribute.
+    '''
     def __init__( self, parent, component ):
         super( ParameterDialog, self ).__init__( parent, component, 'Edit Parameter: <i>%s</i>' % component.name )
 

@@ -1,14 +1,12 @@
-'''
-Created on Jun 27, 2011
-
-@author: christopherreilly
-'''
 from PyQt4 import QtGui
 from . import UnitDialog
 from unit import UnitSelectorWidget
 from ..view import TreeView, TreeWidget
 from ..component import updateModel, BaseComponentModel
 class RepeatDialog( UnitDialog ):
+    """
+    Widgets to view and set the repeatUnit
+    """
     def __init__( self, parent, component ):
         super( RepeatDialog, self ).__init__( parent, component )
 

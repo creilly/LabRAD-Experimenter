@@ -1,8 +1,3 @@
-'''
-Created on May 25, 2011
-
-@author: christopherreilly
-'''
 from __future__ import with_statement
 from PyQt4 import QtGui, QtCore
 

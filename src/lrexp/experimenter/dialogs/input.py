@@ -10,6 +10,11 @@ from ..component import updateModel
 from ..globals import GlobalsModel
 
 def updateModelPlus( f ):
+    """
+    Enhancement to the updateModel decorator to allow custom clean up after ComponentModel update.
+    
+    The class' cleanUp method (no args) will be called after the ComponentModel updates.
+    """
     def _updateModel( *args, **kwargs ):
         updateModel( f )( *args, **kwargs )
         type( args[0] ).cleanUp( args[0] )
