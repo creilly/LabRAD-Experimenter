@@ -1,7 +1,7 @@
 '''
-Created on Jun 11, 2011
+Loads the programs icons into memory.
 
-@author: christopherreilly
+Abstracts the need for modules that use icons to worry about their file location/type/etc.
 '''
 from PyQt4 import QtGui
 from ..components import Action, Scan, Sequence, Repeat, Conditional, Input, Global, Map, Label, ArgumentList, Arguments, Result, ScanRange, NullUnit

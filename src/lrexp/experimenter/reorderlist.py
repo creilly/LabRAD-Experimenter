@@ -1,7 +1,5 @@
 '''
-Created on May 2, 2011
-
-@author: christopherreilly
+Specifies a widget with a toolbar to reorder/resize lists, as well as a specification for objects that want to use this widget.
 '''
 from PyQt4 import QtGui, QtCore
 

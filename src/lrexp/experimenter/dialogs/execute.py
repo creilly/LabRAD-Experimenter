@@ -1,7 +1,7 @@
 '''
-Created on Jun 8, 2011
+Allows incremental or continuous execution of a unit (play/pause/frame-by-frame)
 
-@author: christopherreilly
+Updates the text of components to show their execution status
 '''
 from PyQt4 import QtGui, QtCore
 from ..component import BaseComponentModel, updateModel

@@ -1,7 +1,5 @@
 '''
-Created on Apr 26, 2011
-
-@author: christopherreilly
+Handles most of the menu items, and implements saving and loading of units, as well as the creation of new ones.
 '''
 from __future__ import with_statement
 import os, pickle, inspect

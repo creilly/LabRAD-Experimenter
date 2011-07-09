@@ -1,7 +1,5 @@
 '''
-Created on May 1, 2011
-
-@author: christopherreilly
+Edit dialogs for components that contain a group of other components
 '''
 from PyQt4 import QtGui, QtCore
 

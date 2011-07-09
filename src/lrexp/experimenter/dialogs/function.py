@@ -1,7 +1,5 @@
 '''
-Created on May 4, 2011
-
-@author: christopherreilly
+Dialog that allows selection of functions from function/labrad setting browsers
 '''
 import types
 

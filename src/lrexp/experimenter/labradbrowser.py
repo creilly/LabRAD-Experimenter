@@ -1,7 +1,5 @@
 '''
-Created on Jun 9, 2011
-
-@author: christopherreilly
+Similar to the functionbrowser module but for labrad settings
 '''
 from PyQt4 import QtGui
 from ..lr import LabradSetting

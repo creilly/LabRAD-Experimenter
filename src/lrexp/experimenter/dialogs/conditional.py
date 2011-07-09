@@ -1,8 +1,3 @@
-'''
-Created on Jun 27, 2011
-
-@author: christopherreilly
-'''
 from PyQt4 import QtGui
 from . import UnitDialog
 from unit import UnitSelectorWidget

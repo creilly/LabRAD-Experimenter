@@ -1,10 +1,7 @@
 '''
-Created on Apr 26, 2011
-
-@author: christopherreilly
+Contains main component tree, as well as Globals edit widget and the clip board
 '''
-
-import os, copy
+import os
 
 from PyQt4 import QtGui, QtCore
 

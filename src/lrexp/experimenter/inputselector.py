@@ -1,7 +1,5 @@
 '''
-Created on May 2, 2011
-
-@author: christopherreilly
+Provides a way for components to access inputs from the root tree, clip board, or make new ones.
 '''
 from PyQt4 import QtGui, QtCore
 

@@ -174,6 +174,8 @@ class GlobalsListWidget( QtGui.QListWidget ):
         key = event.key()
         if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
             self.checkRow()
+            return
+        super( GlobalsListWidget, self ).keyPressEvent( event )
 
     def checkRow( self ):
         row = self.currentRow()

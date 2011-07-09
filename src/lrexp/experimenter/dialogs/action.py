@@ -1,7 +1,5 @@
 '''
-Created on May 5, 2011
-
-@author: christopherreilly
+UnitDialog with a function select tab
 '''
 from . import UnitDialog
 

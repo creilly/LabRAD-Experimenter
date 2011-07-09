@@ -1,5 +1,6 @@
-from __future__ import with_statement
-
+"""
+Contains base classes for components and units (Unit is a subclass of Component)
+"""
 from PyQt4 import QtGui, QtCore
 
 from zope.interface import Interface, implements
@@ -12,8 +13,13 @@ from ..clipboard import ClipBoardBrowser
 from ...components import Unit
 
 class ComponentEditDialog( QtGui.QDialog ):
-
+    """
+    Every component edit dialog has a tab that shows the component's place(s) in the root tree
+    """
     class Title( QtGui.QLabel ):
+        """
+        Edit dialog's title
+        """
         def setTitle( self, title ):
             self.setText( '<big><b>%s</b></big>' % title )
 
@@ -48,6 +54,9 @@ class ComponentEditDialog( QtGui.QDialog ):
 
 
 class UnitDialog( ComponentEditDialog ):
+    """
+    Every unit in addition to a match view tab gets a name edit tab and a execution mode selection tab
+    """
     def __init__( self, parent, component ):
         super( UnitDialog, self ).__init__( parent, component, 'Edit %s: <i>%s</i>' % ( type( component ).__name__, component.name ) )
 

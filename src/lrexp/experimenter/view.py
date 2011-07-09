@@ -1,13 +1,12 @@
-'''
-Created on Apr 26, 2011
-
-@author: christopherreilly
-'''
 from PyQt4 import QtGui, QtCore
 from zope.interface import Interface, implements
 
 class TreeWidget( QtGui.QGroupBox ):
-
+    """
+    Wraps a treeview with buttons to expand/collapse the treeview.
+    
+    Also supports adding additional buttons to extend functionality.
+    """
     def __init__( self, tree, title = '', parent = None ):
 
         super( TreeWidget, self ).__init__( title, parent )
@@ -37,6 +36,9 @@ class TreeWidget( QtGui.QGroupBox ):
         return button
 
 class BaseListView( QtGui.QListView ):
+    """
+    Connects enter/return key presses to the doubleclicked signal
+    """
     def __init__( self, parent = None ):
         super( BaseListView, self ).__init__( parent )
         self.setAlternatingRowColors( True )
@@ -71,6 +73,9 @@ class ITree( Interface ):
         """
 
 class TreeView( QtGui.QTreeView ):
+    """
+    Added a couple methods to expand to a particular index.
+    """
     implements( ITree )
     def __init__( self, parent = None ):
         super( TreeView, self ).__init__( parent )
