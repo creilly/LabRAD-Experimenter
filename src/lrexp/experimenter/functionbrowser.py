@@ -86,12 +86,10 @@ class ModuleItem( BaseFunctionModelItem ):
             path, file = os.path.split( obj.__file__ )
             if os.path.splitext( file )[0] == '__init__':
                 modNames = set( ['.'.join( ( obj.__name__, name ) ) for name, ext in sorted( [os.path.splitext( file ) for file in os.listdir( path )] ) if name and name != '__init__' ] )
-                print '*-*-*-*-*-*-*-'
                 for modName in modNames:
                     try:
                         module = __import__( modName, fromlist = modName )
                         self.appendFunctionModelItem( module )
-                        print module.__name__
                     except ImportError:
                         continue
         if not self.rowCount(): self.setText( '%s - Empty' % self.text() )
