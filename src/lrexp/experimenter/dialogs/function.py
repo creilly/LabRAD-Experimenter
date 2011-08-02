@@ -20,6 +20,8 @@ class BaseFunctionDialog( QtGui.QDialog ):
         view.setModel( model )
         view.doubleClicked.connect( lambda index: self.itemSelected( model.itemFromIndex( index ) ) )
         treeWidget = TreeWidget( view, title )
+        refresh = treeWidget.addButton( 'Refresh' )
+        refresh.clicked.connect( model.refresh )
         showInfo = treeWidget.addButton( 'Show Info' )
         showInfo.setToolTip( 'Or press Space Bar on an item' )
         showInfo.clicked.connect( view.showInfo )

@@ -14,16 +14,17 @@ class LabradModel( QtGui.QStandardItemModel ):
         super( LabradModel, self ).__init__()
         cxnMan = LRConnectionManager( self )
         self.cxn = cxnMan.connection
-        self.update() if self.cxn else self.noConnection()
-        cxnMan.connectionMade.connect( self.update )
+        self.refresh() if self.cxn else self.noConnection()
+        cxnMan.connectionMade.connect( self.refresh )
         cxnMan.connectionLost.connect( self.noConnection )
 
-    def update( self ):
+    def refresh( self ):
         self.clear()
-        for serverName, server in self.cxn.servers.items():
-            serverItem = LabradItem( serverName, repr( server ), self.SERVER )
-            for settingName, setting in server.settings.items():
-                settingItem = LabradItem( settingName, repr( setting ), self.SETTING )
+        self.cxn.refresh()
+        for server in self.cxn.servers.values():
+            serverItem = LabradItem( server.name, repr( server ), self.SERVER )
+            for setting in server.settings.values():
+                settingItem = LabradItem( setting.name, repr( setting ), self.SETTING )
                 for overload in setting.accepts:
                     settingItem.appendRow( OverloadItem( overload, LabradSetting( setting, overload ) ) )
                 serverItem.appendRow( settingItem )

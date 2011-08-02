@@ -9,3 +9,9 @@ def greaterThan( x, y ):
 
 def negate( toNegate ):
     return not toNegate
+
+def orAll( *arguments ):
+    return any( arguments )
+
+def andAll( *arguments ):
+    return all( arguments )

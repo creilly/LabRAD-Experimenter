@@ -42,6 +42,9 @@ class LRConnectionManager( QtCore.QObject ):
             Client.connection = None
             self.connectionFailed.emit()
 
+    def disconnect( self ):
+        Client.connection.disconnect()
+
     def _connectionLost( self, *l, **kw ):
         Client.connection = None
         self.connectionChanged.emit( False )

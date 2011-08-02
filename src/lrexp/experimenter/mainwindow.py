@@ -116,14 +116,21 @@ class MainWindow( QtGui.QMainWindow ):
         self.setCentralWidget( centralWidget )
 
         labradConnection = LRConnectionManager( self )
-        connectLabrad = menubar.addMenu( 'LabRAD' ).addAction( 'Connect' )
+        lrMenu = menubar.addMenu( 'LabRAD' )
+        connectLabrad = lrMenu.addAction( 'Connect' )
         connectLabrad.setShortcut( Shortcut( 'Ctrl+L' ) )
         connectLabrad.triggered.connect( labradConnection.connect )
+        disconnectLabrad = lrMenu.addAction( 'Disconnect' )
+        disconnectLabrad.triggered.connect( labradConnection.disconnect )
 
-        labradConnection.connectionChanged.connect( lambda connected: connectLabrad.setEnabled( not connected ) )
-        labradConnection.connectionChanged.connect( lambda connected: status.setText( 'Connected to LabRAD' if connected else 'No LabRAD connection.' ) )
-        labradConnection.connectionChanged.connect( lambda connected: self.connectionLost() if not connected else None )
+        def connectionChanged( connected ):
+            connectLabrad.setEnabled( not connected )
+            disconnectLabrad.setEnabled( connected )
+            status.setText( 'Connected to LabRAD' if connected else 'No LabRAD connection' )
+            if not connected:
+                self.connectionLost()
 
+        labradConnection.connectionChanged.connect( connectionChanged )
         labradConnection.connectionFailed.connect( self.connectionLost )
 
         statusBar = self.statusBar()

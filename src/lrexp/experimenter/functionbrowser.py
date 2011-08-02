@@ -17,6 +17,9 @@ class FunctionModel( QtGui.QStandardItemModel ):
     MODULE = 1
     NONE = 2
     BUILTIN = 3
+    def refresh( self ):
+        for row in range( self.rowCount() ):
+            self.item( row ).refresh()
 
 class IFunctionModelItem( Interface ):
     """
@@ -27,6 +30,10 @@ class IFunctionModelItem( Interface ):
     def getInfoWidget():
         """
         Returns a QtGui.QWidget that shows information about the item
+        """
+    def refresh():
+        """
+        Updates the item
         """
 
 class BaseFunctionModelItem( QtGui.QStandardItem ):
@@ -41,6 +48,9 @@ class BaseFunctionModelItem( QtGui.QStandardItem ):
         self.appendRow( fmi )
         return fmi
     def getInfoWidget( self ): pass
+    def refresh( self ):
+        for row in range( self.rowCount() ):
+            self.child( row ).refresh()
 
 class FunctionItem( BaseFunctionModelItem ):
     """
@@ -67,19 +77,31 @@ class ModuleItem( BaseFunctionModelItem ):
         self.object = obj
         self.setText( obj.__name__.split( '.' )[-1] + ' (M)' )
         self.setToolTip( obj.__name__ )
+        self.getChildren()
+    def getChildren( self ):
+        obj = self.object
         for function in sorted( filter( lambda x: type( x ) is types.FunctionType, obj.__dict__.values() ), key = lambda f: f.__name__ ):
             self.appendFunctionModelItem( function )
         if hasattr( obj, '__file__' ):
             path, file = os.path.split( obj.__file__ )
             if os.path.splitext( file )[0] == '__init__':
                 modNames = set( ['.'.join( ( obj.__name__, name ) ) for name, ext in sorted( [os.path.splitext( file ) for file in os.listdir( path )] ) if name and name != '__init__' ] )
+                print '*-*-*-*-*-*-*-'
                 for modName in modNames:
                     try:
                         module = __import__( modName, fromlist = modName )
                         self.appendFunctionModelItem( module )
+                        print module.__name__
                     except ImportError:
                         continue
         if not self.rowCount(): self.setText( '%s - Empty' % self.text() )
+
+    def refresh( self ):
+        for row in range( self.rowCount() ):
+            self.removeRow( 0 )
+        reload( self.object )
+        self.getChildren()
+        super( ModuleItem, self ).refresh()
 
     def getInfoWidget( self ):
         info = []
