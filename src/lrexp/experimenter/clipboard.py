@@ -125,7 +125,7 @@ class ClipBoardReorderWidget( ReorderWidget ):
     implements( ITree )
     def __init__( self ):
         reorderList = IReorderList( ClipBoardModel() )
-        super( ClipBoardReorderWidget, self ).__init__( reorderList, 'C' )
+        super( ClipBoardReorderWidget, self ).__init__( reorderList, 'B' )
         self.addEnabled = False
         reorderList.widget.selectionModel().currentChanged.connect( self.currentChanged )
         for attr in ITree.names():
