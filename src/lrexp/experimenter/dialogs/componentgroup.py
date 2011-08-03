@@ -65,8 +65,8 @@ class ArgumentListDialog( ComponentGroupModeDialog ):
 
     def setToolbar( self, id ):
         rw = self.reorderWidget
-        rw.ADD = True
-        rw.RAISE = rw.LOWER = rw.REMOVE = False if id is ArgumentList.MONO else True
+        rw.addEnabled = True
+        rw.raiseEnabled = rw.lowerEnabled = rw.removeEnabled = False if id is ArgumentList.MONO else True
 
     @updateModel
     def modeSelected( self, id ):
