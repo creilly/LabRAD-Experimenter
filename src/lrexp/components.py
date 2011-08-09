@@ -131,7 +131,7 @@ class ArgumentList( ComponentGroup ):
     POLY = 1
 
     def __init__( self ):
-        super( ArgumentList, self ).__init__( 'List arguments' )
+        super( ArgumentList, self ).__init__( 'Argument List' )
         self._mode = self.POLY
 
     @property
